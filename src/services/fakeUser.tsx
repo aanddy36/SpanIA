@@ -32,6 +32,17 @@ export enum EditableHoursStatus {
   NOT_SELECTED = "NOT_SELECTED"
 }
 
+export enum TokenRoles {
+  ADMIN = "admin",
+  USER = "user",
+  NONE = "",
+}
+
+export enum CheckStatus {
+  CHECKING = "checking",
+  READY = "ready",
+  FAILED = "failed",
+}
 //INTERFACES
 export interface Student {
   id: string;
@@ -367,3 +378,5 @@ export const resume = {
   hours:classes.reduce((total, { duration }) => total + getDurationValue(duration), 0)/60,
 };
 
+//URL
+export const BACKEND_URL = 'http://localhost:3000/api/v1'

@@ -1,7 +1,13 @@
 import { useForm } from "react-hook-form";
 import close from "../images/icons/close.svg";
-import { useDispatch } from "react-redux";
-import { toggleLogin, toggleSignup } from "../features/auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  registerUser,
+  toggleLogin,
+  toggleSignup,
+} from "../features/auth/authSlice";
+import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
+import { RootState } from "../store";
 
 export const SignUpPopup = () => {
   const {
@@ -11,11 +17,26 @@ export const SignUpPopup = () => {
     getValues,
     formState: { errors },
   } = useForm();
+  const dispatch = useDispatch() as ThunkDispatch<
+    RootState,
+    undefined,
+    AnyAction
+  >;
+  const { errorRegister, isLoading } = useSelector(
+    (store: RootState) => store.auth
+  );
   const onSubmit = (data: any) => {
-    console.log(data);
+    const name = `${data.name?.trim()} ${data.lastName?.trim()}`;
+    const { email, phone, password } = data;
+    let temp = {
+      name,
+      email,
+      phone,
+      password,
+    };
+    dispatch(registerUser({ userData: temp }));
     reset();
   };
-  const dispatch = useDispatch();
   return (
     <article className="w-full h-screen fixed bg-black/50 z-[999]">
       <div
@@ -33,7 +54,13 @@ export const SignUpPopup = () => {
         </button>
         <h1 className=" text-[32px] font-medium">Welcome to SpanIA</h1>
         <h3 className=" font-light opacity-80 text-[16px]">START FOR FREE</h3>
+        
         <form className="mt-12" onSubmit={handleSubmit(onSubmit)}>
+        {errorRegister && (
+          <div className="text-red font-medium text-[14px] pb-2">
+            {errorRegister}
+          </div>
+        )}
           <div className="flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-1 items-start grow">
@@ -159,7 +186,9 @@ export const SignUpPopup = () => {
           </div>
           <button
             className="px-4 py-1 text-white bg-red rounded-lg text-[14px] w-full mt-14
-                transition-colors duration-200 hover:bg-hoverRed"
+                transition-colors duration-200 hover:bg-hoverRed disabled:cursor-not-allowed
+                 disabled:opacity-50"
+            disabled={isLoading}
           >
             Create Account
           </button>

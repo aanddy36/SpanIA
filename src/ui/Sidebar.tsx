@@ -2,8 +2,9 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import close from "../images/icons/close.svg";
 import logo from "../images/icons/logo.svg";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleLogin, toggleSignup } from "../features/auth/authSlice";
+import { signOut, toggleLogin, toggleSignup } from "../features/auth/authSlice";
 import { RootState } from "../store";
+import { TokenRoles } from "../services/fakeUser";
 
 export const Sidebar = ({
   isSidebarOpen,
@@ -14,7 +15,7 @@ export const Sidebar = ({
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isLoggedIn } = useSelector((store: RootState) => store.auth);
+  const { isLoggedIn, role } = useSelector((store: RootState) => store.auth);
 
   const handleReserveClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -22,6 +23,13 @@ export const Sidebar = ({
       navigate("/reserve");
     } else {
       dispatch(toggleLogin(true));
+    }
+  };
+  const profilePath = () => {
+    if (role === TokenRoles.ADMIN) {
+      navigate("/admin");
+    } else if (role === TokenRoles.USER) {
+      navigate("/profile");
     }
   };
   return (
@@ -105,23 +113,22 @@ export const Sidebar = ({
           </>
         ) : (
           <>
-            <NavLink to="profile"
-              className={({ isActive }) =>
-              isActive
-                ? " underline text-red px-4 py-3 border-b"
-                : "no-underline text-black  transition-all duration-200 hover:px-8 px-4 py-3 border-b"
-            }
+            <button
+              className="no-underline text-black  transition-all duration-200 hover:px-8 px-4 py-3 border-b
+              text-left"
               onClick={() => {
                 setIsSidebarOpen(false);
+                profilePath();
               }}
             >
               Profile
-            </NavLink>
+            </button>
             <button
               className="no-underline text-black  transition-all duration-200 hover:px-8 px-4 py-3 border-b
             text-left"
               onClick={() => {
                 setIsSidebarOpen(false);
+                dispatch(signOut());
               }}
             >
               Log Out

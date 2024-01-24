@@ -1,25 +1,65 @@
 import logo from "../images/icons/logo.svg";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import house from "../images/icons/home.svg";
 import calendar from "../images/icons/calendar.svg";
 import students from "../images/icons/students.svg";
 import settings from "../images/icons/setting.svg";
 import logout from "../images/icons/logout.svg";
-import me from "../images/me.jpg";
-import { professor } from "../services/fakeUser";
-import { useSelector } from "react-redux";
+import { CheckStatus, TokenRoles } from "../services/fakeUser";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { ScheduleEditor } from "../pages/ScheduleEditor";
+import { useEffect } from "react";
+import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
+import { checkToken, signOut } from "../features/auth/authSlice";
+import noPhoto from "../images/no-photo.jpg";
+import { LoadingPage } from "./LoadingPage";
+import { RejectedPage } from "./RejectedPage";
 
 export const AdminLayout = () => {
   const isActiveStyle = {
     backgroundColor: "#F5F6F9",
   };
-  const {isEditorOpen} = useSelector((store:RootState)=>store.adminSchedule)
-  
+  const { isEditorOpen } = useSelector(
+    (store: RootState) => store.adminSchedule
+  );
+  const { role, userInfo, isLoading, readyToCheck } = useSelector(
+    (store: RootState) => store.auth
+  );
+  const dispatch = useDispatch() as ThunkDispatch<
+    RootState,
+    undefined,
+    AnyAction
+  >;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const myToken = localStorage.getItem("token");
+        await dispatch(checkToken(myToken as any));
+        if (readyToCheck === CheckStatus.READY) {
+          if (role !== TokenRoles.ADMIN && !isLoading) {
+            navigate("/");
+          }
+        }
+      } catch (error) {
+        console.error("Error in useEffect:", error);
+      }
+    };
+    fetchData();
+  }, [role]);
+
+  if (readyToCheck === CheckStatus.CHECKING) {
+    return <LoadingPage />;
+  }
+  if (readyToCheck === CheckStatus.FAILED) {
+    return <RejectedPage />;
+  }
+  const thePhoto = userInfo.profilePhoto ? userInfo.profilePhoto : noPhoto;
   return (
     <div className="flex min-w-screen">
-      {isEditorOpen && <ScheduleEditor/>}
+      {isEditorOpen && <ScheduleEditor />}
       <section className=" px-6 py-8 flex flex-col items-center gap-10 border h-screen">
         <Link to="/">
           <img src={logo} className="w-[135px] h-[49px]" />
@@ -64,12 +104,16 @@ export const AdminLayout = () => {
         <nav className="h-[70px] border-b px-12 py-3 flex justify-end">
           <section className="gap-[35px] flex ">
             <div className=" flex items-center gap-[10px]">
-              <img src={me} className=" w-9 h-9 rounded-full" />
+              <img src={thePhoto} className=" w-9 h-9 rounded-full" />
               <span className=" text-[14px]">
-                {professor[0].name.split(" ")[0]}
+                {userInfo.name?.split(" ")[0]}
               </span>
             </div>
-            <button>
+            <button
+              onClick={() => {
+                dispatch(signOut());
+              }}
+            >
               <img
                 src={logout}
                 className=" w-[22px] h-[22px] opacity-50 transition-opacity duration-200 hover:opacity-100"

@@ -5,8 +5,6 @@ import clock from "../images/icons/clock.svg";
 import { resume } from "../services/fakeUser";
 
 export const AdminHome = () => {
-  console.log(resume);
-
   return (
     <div className="flex flex-col gap-[31px] h-full">
       <h1 className=" text-[32px] font-medium">Dashboard</h1>

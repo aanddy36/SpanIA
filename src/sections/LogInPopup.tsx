@@ -2,15 +2,41 @@ import { FaLock, FaUser } from "react-icons/fa6";
 import close from "../images/icons/close.svg";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { toggleLogin, toggleSignup } from "../features/auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  loginUser,
+  toggleLogin,
+  toggleSignup,
+} from "../features/auth/authSlice";
+import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
+import { RootState } from "../store";
 
 export const LogInPopup = () => {
   const [activedForm, setActivedForm] = useState(true);
   const { register, handleSubmit, reset } = useForm();
-  const dispatch = useDispatch();
+  const { errorAdmin, errorUser, isLoading } = useSelector(
+    (store: RootState) => store.auth
+  );
+  const dispatch = useDispatch() as ThunkDispatch<
+    RootState,
+    undefined,
+    AnyAction
+  >;
   const onSubmit = (data: any) => {
-    console.log(data);
+    let loginInfo = { email: "", password: "" };
+    if (data.professorEmail) {
+      loginInfo = {
+        email: data.professorEmail,
+        password: data.professorPassword,
+      };
+      dispatch(loginUser({ url: "professor", userData: loginInfo }));
+    } else {
+      loginInfo = {
+        email: data.studentEmail,
+        password: data.studentPassword,
+      };
+      dispatch(loginUser({ url: "students", userData: loginInfo }));
+    }
     reset();
   };
   return (
@@ -33,7 +59,9 @@ export const LogInPopup = () => {
           <button
             className={` flex flex-col items-center gap-4 transition-opacity duration-200 
           hover:opacity-100 ${
-            activedForm ? "opacity-100 border-b border-red font-medium" : "opacity-50 border-none"
+            activedForm
+              ? "opacity-100 border-b border-red font-medium"
+              : "opacity-50 border-none"
           }`}
             onClick={() => {
               setActivedForm(true);
@@ -48,7 +76,9 @@ export const LogInPopup = () => {
           <button
             className={` flex flex-col items-center gap-4 transition-opacity duration-200 
             hover:opacity-100 ${
-              !activedForm ? "opacity-100 border-b border-red font-medium" : " opacity-50 border-none"
+              !activedForm
+                ? "opacity-100 border-b border-red font-medium"
+                : " opacity-50 border-none"
             }`}
             onClick={() => {
               setActivedForm(false);
@@ -76,18 +106,21 @@ export const LogInPopup = () => {
               placeholder="Password"
               {...register("studentPassword")}
             />
-            <span
-              className={`text-red font-medium text-[12px] ${
-                activedForm ? "" : "hidden"
-              }`}
-            >
-              Invalid email or password. Try again.
-            </span>
+            {errorUser && (
+              <span
+                className={`text-red font-medium text-[12px] ${
+                  activedForm ? "" : "hidden"
+                }`}
+              >
+                {errorUser}
+              </span>
+            )}
 
             <input
               className={`w-full border border-black/40 text-[14px] font-light px-4 py-1 rounded-md
               ${!activedForm ? "" : "hidden"}`}
               placeholder="Professor's email"
+              /* defaultValue="fakejavier@hotmail.com" */
               {...register("professorEmail")}
             />
             <input
@@ -95,19 +128,24 @@ export const LogInPopup = () => {
               className={`w-full border border-black/40 text-[14px] font-light px-4 py-1 rounded-md
               ${!activedForm ? "" : "hidden"}`}
               placeholder="Password"
+              /* defaultValue="12345678" */
               {...register("professorPassword")}
             />
-            <span
-              className={`text-red font-medium text-[12px] ${
-                !activedForm ? "" : "hidden"
-              }`}
-            >
-              Invalid email or password. Try again.
-            </span>
+            {errorAdmin && (
+              <span
+                className={`text-red font-medium text-[12px] ${
+                  !activedForm ? "" : "hidden"
+                }`}
+              >
+                {errorAdmin}
+              </span>
+            )}
           </div>
           <button
             className="px-4 py-1 text-white bg-red rounded-lg text-[14px] w-full mt-14
-            transition-colors duration-200 hover:bg-hoverRed"
+            transition-colors duration-200 hover:bg-hoverRed disabled:opacity-50 
+             disabled:cursor-not-allowed"
+            disabled={isLoading}
           >
             Log In
           </button>

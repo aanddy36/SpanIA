@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Layout } from "./ui/Layout";
+import { Layout } from "./sections/Layout";
 import { Home } from "./pages/Home";
 import { About } from "./pages/About";
 import { ReserveClass } from "./pages/ReserveClass";
 import { UserProfile } from "./pages/UserProfile";
-import { AdminLayout } from "./ui/AdminLayout";
+import { AdminLayout } from "./sections/AdminLayout";
 import { AdminHome } from "./pages/AdminHome";
 import { AdminClasses } from "./pages/AdminClasses";
 import { AdminStudents } from "./pages/AdminStudents";
