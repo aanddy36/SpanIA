@@ -35,9 +35,9 @@ export const ReserveClass = () => {
     dispatch(getTeacherSchedule());
   }, [firstDay]);
 
-  useEffect(() => {
+/*   useEffect(() => {
     console.log(teachersSchedule);
-  }, [teachersSchedule]);
+  }, [teachersSchedule]); */
 
   const thePhoto = profilePhoto ? profilePhoto : noPhoto
   return (

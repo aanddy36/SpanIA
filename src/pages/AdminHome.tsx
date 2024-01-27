@@ -3,10 +3,12 @@ import dollar from "../images/icons/money.svg";
 import students from "../images/icons/students.svg";
 import clock from "../images/icons/clock.svg";
 import { resume } from "../services/fakeUser";
+import { DurationPie } from "../sections/DurationPie";
+import { TimeSeries } from "../sections/TimeSeries";
 
 export const AdminHome = () => {
   return (
-    <div className="flex flex-col gap-[31px] h-full">
+    <div className="flex flex-col gap-[31px]">
       <h1 className=" text-[32px] font-medium">Dashboard</h1>
       <section className=" flex gap-[30px]">
         <div className=" bg-white rounded-[10px] w-full p-4 flex justify-start gap-[15px] items-center border">
@@ -54,12 +56,14 @@ export const AdminHome = () => {
           </div>
         </div>
       </section>
-      <section className=" grid grid-cols-2 gap-[30px] h-full">
-        <div className="rounded-[10px] grow border bg-white py-6 px-8">
+      <section className=" grid grid-cols-2 gap-[40px] h-[350px]">
+        <div className="rounded-[10px] grow border bg-white py-6 px-8 flex flex-col gap-2">
           <h1 className=" text-[20px] font-medium">Sales time serie</h1>
+          <TimeSeries />
         </div>
-        <div className="rounded-[10px] grow border bg-white py-6 px-8">
+        <div className="rounded-[10px] grow border bg-white py-6 px-8 flex flex-col gap-2">
           <h1 className=" text-[20px] font-medium">Duration summary</h1>
+          <DurationPie />
         </div>
       </section>
     </div>

@@ -2,6 +2,11 @@ import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./features/auth/authSlice";
 import reserveClassReducer from "./features/reserveClass/reserveClassSlice";
 import {
+  AdminClasses,
+  AdminStudents,
+  AdminSummary,
+  CheckStatus,
+  Classes,
   DurationOptions,
   HoveredCell,
   Schedule_cell,
@@ -10,6 +15,7 @@ import {
 import adminScheduleReducer from "./features/adminSchedule/adminScheduleSlice";
 import { DayInTheWeek } from "./services/teachersAvailabiltyGrid";
 import configurationReducer from "./features/configuration/configurationSlice";
+import adminReducer from "./features/admin/adminSlice";
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +23,7 @@ export const store = configureStore({
     reserveClass: reserveClassReducer,
     adminSchedule: adminScheduleReducer,
     configuration: configurationReducer,
+    admin: adminReducer,
   },
 });
 
@@ -30,7 +37,7 @@ export interface RootState {
     errorUser: string;
     errorRegister: string;
     role: TokenRoles;
-    readyToCheck: boolean;
+    readyToCheck: CheckStatus;
     userInfo: {
       name: string;
       email: string;
@@ -39,6 +46,7 @@ export interface RootState {
       joinedAt: string;
       profilePhoto: string;
     };
+    classes: Classes[];
   };
   reserveClass: {
     duration: DurationOptions;
@@ -69,5 +77,12 @@ export interface RootState {
     phone: string;
     pricePerHour: number | null;
     error: string;
+  };
+  admin: {
+    isLoading: boolean;
+    classes: AdminClasses[];
+    nClasses: number;
+    summary: AdminSummary | {};
+    students: AdminStudents | {};
   };
 }

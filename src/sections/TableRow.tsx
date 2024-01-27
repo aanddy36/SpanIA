@@ -1,6 +1,6 @@
-import { Classes } from "../services/fakeUser";
+import { AdminClasses } from "../services/fakeUser";
 import { formatDate, formatPrice, stringedHour } from "../services/helperFunctions";
-import { StatusSpan } from "./StatusSpan";
+import { StatusSpan } from "../ui/StatusSpan";
 
 export const TableRow = ({
   id,
@@ -8,16 +8,17 @@ export const TableRow = ({
   studentEmail,
   startsOn,
   endsOn,
-  createdAt,
   status,
   price,
-}: Classes) => {
+}: AdminClasses) => {
+  const starting = new Date(startsOn)
+  const ending = new Date(endsOn)
   return (
     <tr
       className="bg-white px-6 py-4 grid grid-cols-5 gap-[20px] text-[14px]
              opacity-80 font-semibold border-b"
     >
-      <td>{id}</td>
+      <td>{id.slice(0,16)}</td>
       <td className="flex flex-col items-start gap-[7px]">
         {studentName}
         <span className=" text-xs font-normal opacity-80">
@@ -25,9 +26,9 @@ export const TableRow = ({
         </span>
       </td>
       <td className="flex flex-col items-start gap-[7px]">
-        {`${stringedHour(startsOn)} - ${stringedHour(endsOn)}`}
+        {`${stringedHour(starting)} - ${stringedHour(ending)}`}
         <span className=" text-xs font-normal opacity-80">
-          {formatDate(createdAt)}
+          {formatDate(starting)}
         </span>
       </td>
       <td>

@@ -9,7 +9,6 @@ import { AdminHome } from "./pages/AdminHome";
 import { AdminClasses } from "./pages/AdminClasses";
 import { AdminStudents } from "./pages/AdminStudents";
 import { AdminSettings } from "./pages/AdminSettings";
-import { ProtectedRoutes } from "./ui/ProtectedRoutes";
 import { WrongPage } from "./pages/WrongPage";
 
 function App() {
@@ -19,10 +18,8 @@ function App() {
         <Route element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
-          <Route element={<ProtectedRoutes />}>
-            <Route path="reserve" element={<ReserveClass />} />
-            <Route path="profile" element={<UserProfile />} />
-          </Route>
+          <Route path="reserve" element={<ReserveClass />} />
+          <Route path="profile" element={<UserProfile />} />
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminHome />} />
@@ -30,7 +27,7 @@ function App() {
           <Route path="students" element={<AdminStudents />} />
           <Route path="settings" element={<AdminSettings />} />
         </Route>
-        <Route path="*" element={<WrongPage/>}/>
+        <Route path="*" element={<WrongPage />} />
       </Routes>
     </BrowserRouter>
   );

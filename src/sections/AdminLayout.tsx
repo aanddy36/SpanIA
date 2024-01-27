@@ -1,5 +1,5 @@
 import logo from "../images/icons/logo.svg";
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet } from "react-router-dom";
 import house from "../images/icons/home.svg";
 import calendar from "../images/icons/calendar.svg";
 import students from "../images/icons/students.svg";
@@ -11,7 +11,7 @@ import { RootState } from "../store";
 import { ScheduleEditor } from "../pages/ScheduleEditor";
 import { useEffect } from "react";
 import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
-import { checkToken, signOut } from "../features/auth/authSlice";
+import { checkToken, rejectCheck, signOut } from "../features/auth/authSlice";
 import noPhoto from "../images/no-photo.jpg";
 import { LoadingPage } from "./LoadingPage";
 import { RejectedPage } from "./RejectedPage";
@@ -31,7 +31,6 @@ export const AdminLayout = () => {
     undefined,
     AnyAction
   >;
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,8 +38,9 @@ export const AdminLayout = () => {
         const myToken = localStorage.getItem("token");
         await dispatch(checkToken(myToken as any));
         if (readyToCheck === CheckStatus.READY) {
-          if (role !== TokenRoles.ADMIN && !isLoading) {
-            navigate("/");
+          
+          if (role !== TokenRoles.ADMIN && !isLoading ) {
+            dispatch(rejectCheck())
           }
         }
       } catch (error) {

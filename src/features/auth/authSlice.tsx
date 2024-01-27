@@ -1,6 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BACKEND_URL, CheckStatus, TokenRoles } from "../../services/fakeUser";
+import {
+  BACKEND_URL,
+  CheckStatus,
+  Classes,
+  TokenRoles,
+} from "../../services/fakeUser";
 
 interface State {
   isLoggedIn: boolean;
@@ -20,6 +25,7 @@ interface State {
     joinedAt: string;
     profilePhoto: string;
   };
+  classes: Classes[];
 }
 
 const initialState: State = {
@@ -40,6 +46,7 @@ const initialState: State = {
     joinedAt: "",
     profilePhoto: "",
   },
+  classes: [],
 };
 
 export const loginUser = createAsyncThunk(
@@ -60,14 +67,13 @@ export const loginUser = createAsyncThunk(
 export const checkToken = createAsyncThunk(
   "auth/checkToken",
   async (token: string) => {
-   
-    try {     
+    try {
       const response = await axios.post(`${BACKEND_URL}/check/token`, {
         token,
       });
-      
+
       return response.data;
-    } catch (error) {     
+    } catch (error) {
       return "error";
     }
   }
@@ -81,6 +87,24 @@ export const registerUser = createAsyncThunk(
         `${BACKEND_URL}/students`,
         arg.userData
       );
+      return response.data;
+    } catch (error) {
+      return "error";
+    }
+  }
+);
+
+export const getUserClasses = createAsyncThunk(
+  "auth/getUserClasses",
+  async (arg: { id: string }) => {
+    const token = localStorage.getItem('token')
+    try {
+      const response = await axios.get(`${BACKEND_URL}/classes/${arg.id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          studentId: arg.id,
+        },
+      });
       return response.data;
     } catch (error) {
       return "error";
@@ -114,6 +138,13 @@ const authSlice = createSlice({
       state.errorAdmin = "";
       state.errorUser = "";
       state.errorRegister = "";
+      state.classes = [];
+    },
+    rejectCheck: (state) => {
+      state.readyToCheck = CheckStatus.FAILED;
+    },
+    acceptCheck: (state) => {
+      state.readyToCheck = CheckStatus.READY;
     },
   },
   extraReducers: (builder) => {
@@ -130,7 +161,8 @@ const authSlice = createSlice({
           state.errorUser = "Invalid email or password. Try again.";
         } else {
           localStorage.setItem("token", payload.token);
-          const { name, role, phone, email, joinedAt, id, profilePhoto } = payload.user;
+          const { name, role, phone, email, joinedAt, id, profilePhoto } =
+            payload.user;
           //const item = localStorage.getItem("token");
           //console.log(item);
           state.isLoggedIn = true;
@@ -139,7 +171,14 @@ const authSlice = createSlice({
           state.isSignupPopupOpen = false;
           state.errorAdmin = "";
           state.errorUser = "";
-          state.userInfo = { name, phone, email, joinedAt, userId: id, profilePhoto };
+          state.userInfo = {
+            name,
+            phone,
+            email,
+            joinedAt,
+            userId: id,
+            profilePhoto,
+          };
         }
       })
       .addCase(loginUser.rejected, (state) => {
@@ -149,11 +188,10 @@ const authSlice = createSlice({
       .addCase(checkToken.pending, (state) => {
         state.isLoading = true;
         state.readyToCheck = CheckStatus.CHECKING;
-        
       })
       .addCase(checkToken.fulfilled, (state, { payload }) => {
         state.isLoading = false;
-        
+
         if (payload === "error") {
           localStorage.removeItem("token");
           state.isLoggedIn = false;
@@ -183,21 +221,45 @@ const authSlice = createSlice({
           state.errorRegister = "Email already in use. Try again.";
         } else {
           localStorage.setItem("token", payload.token);
-          const { name, role, phone, email, joinedAt, id, profilePhoto } = payload.user;
+          const { name, role, phone, email, joinedAt, id, profilePhoto } =
+            payload.user;
 
           state.isLoggedIn = true;
           state.role = role;
           state.isLoginPopupOpen = false;
           state.isSignupPopupOpen = false;
           state.errorRegister = "";
-          state.userInfo = { name, phone, email, joinedAt, userId: id, profilePhoto };
+          state.userInfo = {
+            name,
+            phone,
+            email,
+            joinedAt,
+            userId: id,
+            profilePhoto,
+          };
         }
       })
       .addCase(registerUser.rejected, (state) => {
         state.isLoading = false;
+      })
+
+      .addCase(getUserClasses.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getUserClasses.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        if (payload === "error") {
+          state.readyToCheck = CheckStatus.FAILED;
+        } else {
+          state.classes = payload.classes;
+        }
+      })
+      .addCase(getUserClasses.rejected, (state) => {
+        state.isLoading = false;
       });
   },
 });
-export const { toggleLogin, toggleSignup, signOut } = authSlice.actions;
+export const { toggleLogin, toggleSignup, signOut, rejectCheck, acceptCheck } =
+  authSlice.actions;
 
 export default authSlice.reducer;

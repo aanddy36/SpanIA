@@ -1,6 +1,6 @@
 import { Classes } from "../services/fakeUser";
 import { formatDate, formatPrice, stringedHour } from "../services/helperFunctions";
-import { StatusSpan } from "./StatusSpan";
+import { StatusSpan } from "../ui/StatusSpan";
 
 export const MiniClass = ({
   startsOn,
@@ -10,12 +10,14 @@ export const MiniClass = ({
   status,
   price,
 }: Classes) => {
-  const formattedDate = formatDate(startsOn);
+  const starting = new Date(startsOn)
+  const ending = new Date(endsOn)
+  const formattedDate = formatDate(starting);
   return (
     <li className="border-b flex justify-between items-start pb-2 pt-3 px-2">
       <div className="flex flex-col gap-[2px] max-w-[68%] tablet:max-w-fit">
         <span className=" text-lg font-medium">
-          {stringedHour(startsOn)} - {stringedHour(endsOn)} | {formattedDate}
+          {stringedHour(starting)} - {stringedHour(ending)} | {formattedDate}
         </span>
         <span className="text-[14px] opacity-60 font-light">
           {professorAddress}

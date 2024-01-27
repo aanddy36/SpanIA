@@ -1,20 +1,21 @@
-import { useNavigate } from "react-router-dom";
-import { TokenRoles, classes } from "../services/fakeUser";
 import { formatDate } from "../services/helperFunctions";
-import { MiniClass } from "../ui/MiniClass";
+import { MiniClass } from "../sections/MiniClass";
 import { FaCamera } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { useEffect } from "react";
-import { checkToken } from "../features/auth/authSlice";
+import { getUserClasses } from "../features/auth/authSlice";
 import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
 import noPhoto from "../images/no-photo.jpg";
+import { LoadingPage } from "../sections/LoadingPage";
 
 export const UserProfile = () => {
-  const sortedClasses = classes.sort(
+  /*   const sortedClasses = classes.sort(
     (a, b) => b.startsOn.getTime() - a.startsOn.getTime()
+  ); */
+  const { userInfo, classes, isLoading } = useSelector(
+    (store: RootState) => store.auth
   );
-  const { role, userInfo } = useSelector((store: RootState) => store.auth);
   const formattedDate = formatDate(new Date(userInfo.joinedAt));
   const dispatch = useDispatch() as ThunkDispatch<
     RootState,
@@ -22,19 +23,13 @@ export const UserProfile = () => {
     AnyAction
   >;
 
-  const navigate = useNavigate();
   useEffect(() => {
-    const myToken = localStorage.getItem("token");
-    if (myToken) {
-      dispatch(checkToken(myToken));
-    }
+    dispatch(getUserClasses({ id: userInfo.userId }));
   }, []);
-  useEffect(() => {
-    if (role !== TokenRoles.USER) {
-      navigate("/");
-    }
-  }, [role]);
   const thePhoto = userInfo.profilePhoto ? userInfo.profilePhoto : noPhoto;
+  if (isLoading) {
+    return <LoadingPage />;
+  }
   return (
     <div className=" bg-notAvail border py-8 px-2 tablet:px-6 flex flex-col gap-5 full:px-24 laptop:flex-row">
       <section
@@ -68,13 +63,13 @@ export const UserProfile = () => {
       <section className="grow bg-white rounded-lg py-6 px-3 laptop:px-6 flex flex-col">
         <div className=" text-2xl border-b pb-2">Classes</div>
         <ul className=" grow overflow-auto pt-2 max-h-[290px]">
-          {false ? (
+          {!classes.length ? (
             <div className=" py-6 italic opacity-50 h-full text-center text-xl">
               No classes yet
             </div>
           ) : (
             <>
-              {sortedClasses.map((item) => {
+              {classes.map((item) => {
                 return <MiniClass key={item.id} {...item} />;
               })}
             </>

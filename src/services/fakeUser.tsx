@@ -16,9 +16,8 @@ export enum ClassesStatus {
   DONE = "Done",
   IN_PROGRESS = "In progress",
   IN_COMING = "In coming",
-  CANCELED = "Canceled",
 }
-export const filters = ["All","Done","In progress","In coming","Canceled"]
+export const filters = ["All","Done","In progress","In coming"]
 
 export enum TeacherHoursStatus {
   NOT_AVAILABLE = "NOT_AVAILABLE",
@@ -89,6 +88,29 @@ export interface HoveredCell {
   col?: number
 }
 
+export interface AdminSummary {
+  nClasses: number;
+  totalSales: number;
+  nStudents: number;
+  totalHours: number;
+}
+
+export interface AdminStudents {
+  profilePhoto: string;
+  name: string;
+  email: string;
+  nClasses: number;
+}
+export interface AdminClasses {
+  id: string;
+  price: PriceOptions;
+  startsOn: Date;
+  endsOn: Date;
+  status: ClassesStatus;
+  studentName: string;
+  studentEmail: string;
+}
+
 //FAKEDATA
 
 //Professor
@@ -154,7 +176,7 @@ export const classes: Classes[] = [
     createdAt: new Date(),
     startsOn: new Date(2024, 0, 3, 14, 0),
     endsOn: new Date(2024, 0, 3, 16, 0),
-    status: ClassesStatus.CANCELED,
+    status: ClassesStatus.DONE,
     studentId: "12345678",
     studentPhone: "+9(123)-456-7890",
         studentName: "Andrés Del Chiaro B.",
@@ -186,7 +208,7 @@ export const classes: Classes[] = [
     createdAt: new Date(),
     startsOn: new Date(2024, 0, 5, 10, 30),
     endsOn: new Date(2024, 0, 5, 12, 0),
-    status: ClassesStatus.CANCELED,
+    status: ClassesStatus.DONE,
     studentId: "12345678",
     studentPhone: "+9(123)-456-7890",
         studentName: "Andrés Del Chiaro B.",
@@ -341,6 +363,24 @@ export const classes: Classes[] = [
     professorAddress: "2101 NASA Pkwy Houston, TX 77058",
   },
 ];
+
+//AdminHome
+
+export const fakeSales = [
+  {label:'Jan 4', sales:12},
+  {label:'Jan 21', sales:72},
+  {label:'Jan 22', sales:18},
+  {label:'Jan 26', sales:42},
+  {label:'Jan 27', sales:36},
+  {label:'Jan 28', sales:36},
+  {label:'Jan 29', sales:66},
+]
+
+export const fakePieChart = [
+  {duration:'60 min', value:2, color:'#84cc16'},
+  {duration:'90 min', value:4, color:'#f97316'},
+  {duration:'120 min', value:3, color:'#ef4444'},
+]
 
 //AdminResume
 

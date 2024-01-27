@@ -1,23 +1,57 @@
 import { useForm } from "react-hook-form";
-import { ClassesStatus, classes, filters } from "../services/fakeUser";
-import { TableClasses } from "../ui/TableClasses";
-
-interface Form {
-  filtering: ClassesStatus,
-  sorting: "recent" | "earlier"
-}
+import { ClassesStatus, filters } from "../services/fakeUser";
+import { TableClasses } from "../sections/TableClasses";
+import { useDispatch, useSelector } from "react-redux";
+import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
+import { RootState } from "../store";
+import { useEffect, useState } from "react";
+import { getClasses } from "../features/admin/adminSlice";
+import { LoadingPage } from "../sections/LoadingPage";
 
 export const AdminClasses = () => {
-  const { register, handleSubmit, watch } = useForm({
+  const { register, watch } = useForm({
     defaultValues: {
       filtering: ClassesStatus.ALL,
-      sorting: "recent",
+      sorting: "-1",
     },
   });
   const myFilter = watch("filtering");
-  const onSubmit = (data: Form) => {
-    console.log(data);
-  };
+  const mySorting = watch("sorting");
+  const [page, setPage] = useState(1);
+
+  const dispatch = useDispatch() as ThunkDispatch<
+    RootState,
+    undefined,
+    AnyAction
+  >;
+  useEffect(() => {
+    setPage(1)
+    dispatch(
+      getClasses({
+        status: myFilter,
+        sorting: mySorting as "-1" | "1",
+        page: page,
+      })
+    );
+  }, [myFilter]);
+  useEffect(() => {
+    dispatch(
+      getClasses({
+        status: myFilter,
+        sorting: mySorting as "-1" | "1",
+        page: page,
+      })
+    );
+  }, [mySorting, page]);
+
+  const { isLoading, classes, nClasses } = useSelector(
+    (store: RootState) => store.admin
+  );
+
+  if (isLoading) {
+    return <LoadingPage />;
+  }
+
   return (
     <main className="">
       <section className="flex items-center justify-between">
@@ -35,7 +69,6 @@ export const AdminClasses = () => {
                   : "bg-white text-black"
               }`}
                   htmlFor={filter}
-                  onChange={handleSubmit(onSubmit as any)}
                 >
                   {filter}
                   <input
@@ -54,16 +87,17 @@ export const AdminClasses = () => {
            text-[14px]"
             {...register("sorting")}
           >
-            <option value="recent" onChange={handleSubmit(onSubmit as any)}>
-              Sort by date (recent first)
-            </option>
-            <option value="earlier" onChange={handleSubmit(onSubmit as any)}>
-              Sort by date (earlier first)
-            </option>
+            <option value="-1">Sort by date (recent first)</option>
+            <option value="1">Sort by date (earlier first)</option>
           </select>
         </form>
       </section>
-      <TableClasses classes={classes.slice(0,10)} nOfClasses={12}/>
+      <TableClasses
+        classes={classes.slice(0, 10)}
+        nOfClasses={nClasses}
+        page={page}
+        setPage={setPage}
+      />
     </main>
   );
 };
