@@ -6,16 +6,18 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
-import { fakePieChart } from "../services/fakeUser";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 export const DurationPie = () => {
+  const { pieChart } = useSelector((store: RootState) => store.admin);
   return (
     <div className="grow">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Tooltip />
           <Pie
-            data={fakePieChart}
+            data={pieChart}
             nameKey="duration"
             dataKey="value"
             innerRadius={85}
@@ -24,7 +26,7 @@ export const DurationPie = () => {
             cy="50%"
             paddingAngle={3}
           >
-            {fakePieChart.map((entries) => (
+            {pieChart?.map((entries) => (
               <Cell
                 fill={entries.color}
                 stroke={entries.color}

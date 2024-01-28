@@ -3,10 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggleEditor } from "../features/adminSchedule/adminScheduleSlice";
 import { RootState } from "../store";
 import { useEffect } from "react";
-import { editConfiguration, getConfiguration } from "../features/configuration/configurationSlice";
+import {
+  editConfiguration,
+  getConfiguration,
+} from "../features/configuration/configurationSlice";
 import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
-import { FadeLoader } from "react-spinners";
 import { isValidImageFile } from "../services/helperFunctions";
+import { LoadingAdmin } from "../sections/LoadingAdmin";
 
 export const AdminSettings = () => {
   const dispatch = useDispatch() as ThunkDispatch<
@@ -21,10 +24,10 @@ export const AdminSettings = () => {
     userInfo: { profilePhoto },
   } = useSelector((store: RootState) => store.auth);
   useEffect(() => {
-    const fetchConfiguration = async ()=>{
+    const fetchConfiguration = async () => {
       await dispatch(getConfiguration());
-    }
-    fetchConfiguration()
+    };
+    fetchConfiguration();
   }, []);
   const initialValues = {
     pricePerHour: pricePerHour,
@@ -37,7 +40,7 @@ export const AdminSettings = () => {
     handleSubmit,
     formState: { errors },
     setError,
-    reset
+    reset,
   } = useForm({
     defaultValues: initialValues,
   });
@@ -49,24 +52,23 @@ export const AdminSettings = () => {
         setError("avatar", {
           message: "Invalid file type. Please choose a jpg, jpeg, or png file",
         });
-      }else{
+      } else {
         //selectedFile = await convertFileToBase64(selectedFile)
         //console.log(selectedFile);
-        
       }
     }
     let newData = {
       ...data,
       pricePerHour: Number(data.pricePerHour),
-      avatar: !selectedFile ? "" : (selectedFile ? selectedFile : profilePhoto),
+      avatar: !selectedFile ? "" : selectedFile ? selectedFile : profilePhoto,
     };
     //console.log(newData);
     //console.log(initialValues);
 
     if (JSON.stringify(newData) === JSON.stringify(initialValues)) {
-      reset()
-    } else {    
-      dispatch(editConfiguration({config:newData}))
+      reset();
+    } else {
+      dispatch(editConfiguration({ config: newData }));
     }
   };
 
@@ -80,19 +82,9 @@ export const AdminSettings = () => {
       });
     }
   }, [isLoadingConfig]);
-  
-  if (isLoadingConfig) {   
-    return (
-      <div className="border h-full grid place-content-center">
-        <FadeLoader
-          color="#E31010"
-          height={30}
-          margin={14}
-          radius={4}
-          width={10}
-        />
-      </div>
-    );
+
+  if (isLoadingConfig) {
+    return <LoadingAdmin />;
   }
   return (
     <div>

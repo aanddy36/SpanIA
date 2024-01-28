@@ -2,7 +2,7 @@ import { FadeLoader } from 'react-spinners'
 
 export const LoadingPage = () => {
   return (
-    <div className="border h-screen w-screen grid place-content-center">
+    <div className="h-screen w-screen grid place-content-center">
     <FadeLoader
       color="#E31010"
       height={30}

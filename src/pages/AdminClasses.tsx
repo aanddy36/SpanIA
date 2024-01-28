@@ -6,7 +6,7 @@ import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { useEffect, useState } from "react";
 import { getClasses } from "../features/admin/adminSlice";
-import { LoadingPage } from "../sections/LoadingPage";
+import { LoadingAdmin } from "../sections/LoadingAdmin";
 
 export const AdminClasses = () => {
   const { register, watch } = useForm({
@@ -49,7 +49,7 @@ export const AdminClasses = () => {
   );
 
   if (isLoading) {
-    return <LoadingPage />;
+    return <LoadingAdmin />;
   }
 
   return (

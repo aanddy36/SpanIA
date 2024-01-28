@@ -7,13 +7,15 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { fakeSales } from "../services/fakeUser";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 export const TimeSeries = () => {
+const { timeSeries } = useSelector((store: RootState) => store.admin);
   return (
     <div className="grow">
       <ResponsiveContainer width="100%">
-        <AreaChart data={fakeSales}>
+        <AreaChart data={timeSeries}>
           <XAxis dataKey="label" />
           <YAxis unit="$" />
           <CartesianGrid />

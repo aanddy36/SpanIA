@@ -2,11 +2,28 @@ import pres from "../images/icons/presentations.svg";
 import dollar from "../images/icons/money.svg";
 import students from "../images/icons/students.svg";
 import clock from "../images/icons/clock.svg";
-import { resume } from "../services/fakeUser";
 import { DurationPie } from "../sections/DurationPie";
 import { TimeSeries } from "../sections/TimeSeries";
+import { useDispatch, useSelector } from "react-redux";
+import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
+import { RootState } from "../store";
+import { useEffect } from "react";
+import { getSummary } from "../features/admin/adminSlice";
+import { LoadingAdmin } from "../sections/LoadingAdmin";
 
 export const AdminHome = () => {
+  const dispatch = useDispatch() as ThunkDispatch<
+    RootState,
+    undefined,
+    AnyAction
+  >;
+  const { isLoading, summary } = useSelector((store: RootState) => store.admin);
+  useEffect(() => {
+    dispatch(getSummary());
+  }, []);
+  if (isLoading) {
+    return <LoadingAdmin />;
+  }
   return (
     <div className="flex flex-col gap-[31px]">
       <h1 className=" text-[32px] font-medium">Dashboard</h1>
@@ -17,7 +34,7 @@ export const AdminHome = () => {
           </span>
           <div className="flex flex-col items-start">
             <span className="uppercase font-semibold text-[12px]">classes</span>
-            <span className=" text-2xl font-medium">{resume.classes}</span>
+            <span className=" text-2xl font-medium">{summary.nClasses}</span>
           </div>
         </div>
         <div className=" bg-white rounded-[10px] w-full p-4 flex justify-start gap-[15px] items-center border">
@@ -28,7 +45,7 @@ export const AdminHome = () => {
             <span className="uppercase font-semibold text-[12px]">sales</span>
             <span className=" text-2xl font-medium">
               $
-              {resume.sales.toLocaleString("en-US", {
+              {summary.totalSales.toLocaleString("en-US", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })}
@@ -43,7 +60,7 @@ export const AdminHome = () => {
             <span className="uppercase font-semibold text-[12px]">
               students
             </span>
-            <span className=" text-2xl font-medium">{resume.students}</span>
+            <span className=" text-2xl font-medium">{summary.nStudents}</span>
           </div>
         </div>
         <div className=" bg-white rounded-[10px] w-full p-4 flex justify-start gap-[15px] items-center border">
@@ -52,7 +69,7 @@ export const AdminHome = () => {
           </span>
           <div className="flex flex-col items-start">
             <span className="uppercase font-semibold text-[12px]">hours</span>
-            <span className=" text-2xl font-medium">{resume.hours}</span>
+            <span className=" text-2xl font-medium">{summary.totalHours}</span>
           </div>
         </div>
       </section>

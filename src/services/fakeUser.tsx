@@ -17,7 +17,7 @@ export enum ClassesStatus {
   IN_PROGRESS = "In progress",
   IN_COMING = "In coming",
 }
-export const filters = ["All","Done","In progress","In coming"]
+export const filters = ["All", "Done", "In progress", "In coming"];
 
 export enum TeacherHoursStatus {
   NOT_AVAILABLE = "NOT_AVAILABLE",
@@ -28,7 +28,7 @@ export enum TeacherHoursStatus {
 
 export enum EditableHoursStatus {
   SELECTED = "SELECTED",
-  NOT_SELECTED = "NOT_SELECTED"
+  NOT_SELECTED = "NOT_SELECTED",
 }
 
 export enum TokenRoles {
@@ -75,17 +75,17 @@ export interface Classes {
   professorAddress: string;
 }
 
-export interface Schedule_cell{
-  id:string,
-  time:number,
-  hourStatus: TeacherHoursStatus | EditableHoursStatus
+export interface Schedule_cell {
+  id: string;
+  time: number;
+  hourStatus: TeacherHoursStatus | EditableHoursStatus;
 }
 
 export interface HoveredCell {
   date: number;
   x: number | null;
   y: number | null;
-  col?: number
+  col?: number;
 }
 
 export interface AdminSummary {
@@ -96,10 +96,11 @@ export interface AdminSummary {
 }
 
 export interface AdminStudents {
+  _id: string;
   profilePhoto: string;
   name: string;
   email: string;
-  nClasses: number;
+  classCount: number;
 }
 export interface AdminClasses {
   id: string;
@@ -109,6 +110,17 @@ export interface AdminClasses {
   status: ClassesStatus;
   studentName: string;
   studentEmail: string;
+}
+
+export interface Sales {
+  label: string;
+  sales: number;
+}
+
+export interface Chart {
+  duration: string;
+  value: number;
+  color: string;
 }
 
 //FAKEDATA
@@ -179,7 +191,7 @@ export const classes: Classes[] = [
     status: ClassesStatus.DONE,
     studentId: "12345678",
     studentPhone: "+9(123)-456-7890",
-        studentName: "Andrés Del Chiaro B.",
+    studentName: "Andrés Del Chiaro B.",
     studentEmail: "anchibro@hotmail.com",
     professorId: "qwertyui1",
     professorPhone: "+1 (123)-456-7890",
@@ -195,7 +207,7 @@ export const classes: Classes[] = [
     status: ClassesStatus.DONE,
     studentId: "12345678",
     studentPhone: "+9(123)-456-7890",
-        studentName: "Andrés Del Chiaro B.",
+    studentName: "Andrés Del Chiaro B.",
     studentEmail: "anchibro@hotmail.com",
     professorId: "qwertyui1",
     professorPhone: "+1 (123)-456-7890",
@@ -211,7 +223,7 @@ export const classes: Classes[] = [
     status: ClassesStatus.DONE,
     studentId: "12345678",
     studentPhone: "+9(123)-456-7890",
-        studentName: "Andrés Del Chiaro B.",
+    studentName: "Andrés Del Chiaro B.",
     studentEmail: "anchibro@hotmail.com",
     professorId: "qwertyui1",
     professorPhone: "+1 (123)-456-7890",
@@ -227,7 +239,7 @@ export const classes: Classes[] = [
     status: ClassesStatus.DONE,
     studentId: "12345678",
     studentPhone: "+9(123)-456-7890",
-        studentName: "Andrés Del Chiaro B.",
+    studentName: "Andrés Del Chiaro B.",
     studentEmail: "anchibro@hotmail.com",
     professorId: "qwertyui1",
     professorPhone: "+1 (123)-456-7890",
@@ -243,7 +255,7 @@ export const classes: Classes[] = [
     status: ClassesStatus.DONE,
     studentId: "12345678",
     studentPhone: "+9(123)-456-7890",
-        studentName: "Andrés Del Chiaro B.",
+    studentName: "Andrés Del Chiaro B.",
     studentEmail: "anchibro@hotmail.com",
     professorId: "qwertyui1",
     professorPhone: "+1 (123)-456-7890",
@@ -259,7 +271,7 @@ export const classes: Classes[] = [
     status: ClassesStatus.IN_PROGRESS,
     studentId: "12345678",
     studentPhone: "+9(123)-456-7890",
-        studentName: "Andrés Del Chiaro B.",
+    studentName: "Andrés Del Chiaro B.",
     studentEmail: "anchibro@hotmail.com",
     professorId: "qwertyui1",
     professorPhone: "+1 (123)-456-7890",
@@ -275,7 +287,7 @@ export const classes: Classes[] = [
     status: ClassesStatus.IN_COMING,
     studentId: "12345678",
     studentPhone: "+9(123)-456-7890",
-        studentName: "Andrés Del Chiaro B.",
+    studentName: "Andrés Del Chiaro B.",
     studentEmail: "anchibro@hotmail.com",
     professorId: "qwertyui1",
     professorPhone: "+1 (123)-456-7890",
@@ -291,7 +303,7 @@ export const classes: Classes[] = [
     status: ClassesStatus.IN_COMING,
     studentId: "12345678",
     studentPhone: "+9(123)-456-7890",
-        studentName: "Andrés Del Chiaro B.",
+    studentName: "Andrés Del Chiaro B.",
     studentEmail: "anchibro@hotmail.com",
     professorId: "qwertyui1",
     professorPhone: "+1 (123)-456-7890",
@@ -307,7 +319,7 @@ export const classes: Classes[] = [
     status: ClassesStatus.IN_COMING,
     studentId: "12345678",
     studentPhone: "+9(123)-456-7890",
-        studentName: "Andrés Del Chiaro B.",
+    studentName: "Andrés Del Chiaro B.",
     studentEmail: "anchibro@hotmail.com",
     professorId: "qwertyui1",
     professorPhone: "+1 (123)-456-7890",
@@ -323,13 +335,13 @@ export const classes: Classes[] = [
     status: ClassesStatus.IN_COMING,
     studentId: "12345678",
     studentPhone: "+9(123)-456-7890",
-        studentName: "Andrés Del Chiaro B.",
+    studentName: "Andrés Del Chiaro B.",
     studentEmail: "anchibro@hotmail.com",
     professorId: "qwertyui1",
     professorPhone: "+1 (123)-456-7890",
     professorAddress: "2101 NASA Pkwy Houston, TX 77058",
   },
-  
+
   {
     id: "class-13",
     duration: DurationOptions.LONG,
@@ -340,7 +352,7 @@ export const classes: Classes[] = [
     status: ClassesStatus.IN_COMING,
     studentId: "12345678",
     studentPhone: "+9(123)-456-7890",
-        studentName: "Andrés Del Chiaro B.",
+    studentName: "Andrés Del Chiaro B.",
     studentEmail: "anchibro@hotmail.com",
     professorId: "qwertyui1",
     professorPhone: "+1 (123)-456-7890",
@@ -356,7 +368,7 @@ export const classes: Classes[] = [
     status: ClassesStatus.IN_COMING,
     studentId: "12345678",
     studentPhone: "+9(123)-456-7890",
-        studentName: "Andrés Del Chiaro B.",
+    studentName: "Andrés Del Chiaro B.",
     studentEmail: "anchibro@hotmail.com",
     professorId: "qwertyui1",
     professorPhone: "+1 (123)-456-7890",
@@ -367,20 +379,20 @@ export const classes: Classes[] = [
 //AdminHome
 
 export const fakeSales = [
-  {label:'Jan 4', sales:12},
-  {label:'Jan 21', sales:72},
-  {label:'Jan 22', sales:18},
-  {label:'Jan 26', sales:42},
-  {label:'Jan 27', sales:36},
-  {label:'Jan 28', sales:36},
-  {label:'Jan 29', sales:66},
-]
+  { label: "Jan 4", sales: 12 },
+  { label: "Jan 21", sales: 72 },
+  { label: "Jan 22", sales: 18 },
+  { label: "Jan 26", sales: 42 },
+  { label: "Jan 27", sales: 36 },
+  { label: "Jan 28", sales: 36 },
+  { label: "Jan 29", sales: 66 },
+];
 
 export const fakePieChart = [
-  {duration:'60 min', value:2, color:'#84cc16'},
-  {duration:'90 min', value:4, color:'#f97316'},
-  {duration:'120 min', value:3, color:'#ef4444'},
-]
+  { duration: "60 min", value: 2, color: "#84cc16" },
+  { duration: "90 min", value: 4, color: "#f97316" },
+  { duration: "120 min", value: 3, color: "#ef4444" },
+];
 
 //AdminResume
 
@@ -410,13 +422,16 @@ const getDurationValue = (durationValue: DurationOptions): number => {
   }
 };
 
-
 export const resume = {
   classes: classes.length,
   sales: classes.reduce((total, { price }) => total + getPriceValue(price), 0),
-  students:student.length,
-  hours:classes.reduce((total, { duration }) => total + getDurationValue(duration), 0)/60,
+  students: student.length,
+  hours:
+    classes.reduce(
+      (total, { duration }) => total + getDurationValue(duration),
+      0
+    ) / 60,
 };
 
 //URL
-export const BACKEND_URL = 'http://localhost:3000/api/v1'
+export const BACKEND_URL = "http://localhost:3000/api/v1";

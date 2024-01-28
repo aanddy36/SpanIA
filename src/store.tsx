@@ -5,10 +5,12 @@ import {
   AdminClasses,
   AdminStudents,
   AdminSummary,
+  Chart,
   CheckStatus,
   Classes,
   DurationOptions,
   HoveredCell,
+  Sales,
   Schedule_cell,
   TokenRoles,
 } from "./services/fakeUser";
@@ -82,7 +84,9 @@ export interface RootState {
     isLoading: boolean;
     classes: AdminClasses[];
     nClasses: number;
-    summary: AdminSummary | {};
-    students: AdminStudents | {};
+    summary: AdminSummary;
+    students: AdminStudents[];
+    timeSeries: Sales[];
+    pieChart: Chart[];
   };
 }
