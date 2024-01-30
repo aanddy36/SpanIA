@@ -13,7 +13,7 @@ import {
   Sales,
   Schedule_cell,
   TokenRoles,
-} from "./services/fakeUser";
+} from "./services/models";
 import adminScheduleReducer from "./features/adminSchedule/adminScheduleSlice";
 import { DayInTheWeek } from "./services/teachersAvailabiltyGrid";
 import configurationReducer from "./features/configuration/configurationSlice";
@@ -72,6 +72,7 @@ export interface RootState {
       | "CLEAR_SCHEDULE"
       | "SAVE"
       | "";
+      isLoadingSched: boolean;
   };
   configuration: {
     isLoadingConfig: boolean;

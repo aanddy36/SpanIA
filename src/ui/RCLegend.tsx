@@ -6,13 +6,37 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { FaChevronLeft, FaChevronRight, FaClock } from "react-icons/fa6";
 import { formatDate } from "../services/helperFunctions";
-import { DurationOptions } from "../services/fakeUser";
+import { DurationOptions } from "../services/models";
 import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
+import { getConfiguration } from "../features/configuration/configurationSlice";
 
 export const RCLegend = () => {
-  const dispatch = useDispatch();
-  const { firstDay, duration } = useSelector((store: RootState) => store.reserveClass);
-  const { register } = useForm({defaultValues:{duration}});
+  const dispatch = useDispatch() as ThunkDispatch<
+    RootState,
+    undefined,
+    AnyAction
+  >;
+  const { firstDay, duration } = useSelector(
+    (store: RootState) => store.reserveClass
+  );
+  const { pricePerHour, isLoadingConfig } = useSelector(
+    (store: RootState) => store.configuration
+  );
+  const { register, watch } = useForm({ defaultValues: { duration } });
+  const formDuration = watch("duration");
+
+  useEffect(() => {
+    dispatch(getConfiguration());
+  }, []);
+
+  useEffect(() => {
+    let newPrice = (Number(formDuration) / 60) * Number(pricePerHour);
+    dispatch(
+      changeDuration({ duration: Number(formDuration), price: newPrice })
+    );
+  }, [formDuration, isLoadingConfig]);
 
   const newDate = new Date(firstDay);
   newDate.setDate(newDate.getDate() + 6);
@@ -40,7 +64,6 @@ export const RCLegend = () => {
         <select
           className="text-xs font-medium opacity-80"
           {...register("duration")}
-          onChange={(e) => dispatch(changeDuration(Number(e.target.value)))}
         >
           <option value={DurationOptions.SHORT}>60 min</option>
           <option value={DurationOptions.MEDIUM}>90 min</option>

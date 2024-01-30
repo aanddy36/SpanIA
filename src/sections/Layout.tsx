@@ -7,14 +7,14 @@ import { RootState } from "../store";
 import { Topbar } from "./Topbar";
 import { Sidebar } from "./Sidebar";
 import { Footer } from "./Footer";
-import { ConfirmClassPopup } from "../ui/ConfirmClassPopup";
+import { ConfirmClassPopup } from "./ConfirmClassPopup";
 import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
 import {
   acceptCheck,
   checkToken,
   rejectCheck,
 } from "../features/auth/authSlice";
-import { CheckStatus, TokenRoles } from "../services/fakeUser";
+import { CheckStatus, TokenRoles } from "../services/models";
 import { LoadingPage } from "./LoadingPage";
 import { RejectedPage } from "./RejectedPage";
 

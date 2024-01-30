@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { EditableHoursStatus, Schedule_cell } from "../services/fakeUser";
+import { EditableHoursStatus, Schedule_cell } from "../services/models";
 import { hoveredEditHour, toggleCell, unhoveredEditHour } from "../features/adminSchedule/adminScheduleSlice";
 
 export const EditorCell = ({cell, col}:{cell:Schedule_cell, col:number}) => {

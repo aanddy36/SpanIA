@@ -16,14 +16,8 @@ import { SelectedTag } from "../ui/SelectedTag";
 
 export const ReserveClass = () => {
   const dispatch = useDispatch();
-  const {
-    hoveredCellInfo,
-    firstDay,
-    hoveredCells,
-    price,
-    selectedCells,
-    teachersSchedule,
-  } = useSelector((store: RootState) => store.reserveClass);
+  const { hoveredCellInfo, firstDay, hoveredCells, price, selectedCells } =
+    useSelector((store: RootState) => store.reserveClass);
 
   const {
     userInfo: { profilePhoto },
@@ -35,11 +29,7 @@ export const ReserveClass = () => {
     dispatch(getTeacherSchedule());
   }, [firstDay]);
 
-/*   useEffect(() => {
-    console.log(teachersSchedule);
-  }, [teachersSchedule]); */
-
-  const thePhoto = profilePhoto ? profilePhoto : noPhoto
+  const thePhoto = profilePhoto ? profilePhoto : noPhoto;
   return (
     <div className="border">
       <section className=" text-xl font-semibold w-full text-center py-6 border-b">
@@ -71,7 +61,10 @@ export const ReserveClass = () => {
 
       <section className="border h-[71px] flex items-center justify-between px-6">
         <div className="flex items-center gap-14">
-          <img src={thePhoto} className="w-[40px] h-[40px] rounded-full border" />
+          <img
+            src={thePhoto}
+            className="w-[40px] h-[40px] rounded-full border"
+          />
           <div className="flex items-center gap-8">
             <DurationTag />
             {selectedCells && <SelectedTag />}

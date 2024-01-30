@@ -7,6 +7,9 @@ export const EditorSchedule = () => {
   const { editableGrid } = useSelector(
     (store: RootState) => store.adminSchedule
   );
+  /* useEffect(() => {
+    console.log(selectedCells);
+  }, [selectedCells]); */
   return (
     <div className="grid grid-cols-8 h-[270px] overflow-y-scroll border-red-scroll">
       <div className="flex flex-col relative bottom-[15px]">
@@ -24,7 +27,7 @@ export const EditorSchedule = () => {
       {editableGrid.map((col, nCol) => (
         <div className="flex flex-col" key={nCol}>
           {col.map((cell, row) => (
-            <EditorCell cell={cell} col={nCol} key={row}/>
+            <EditorCell cell={cell} col={nCol} key={row} />
           ))}
         </div>
       ))}

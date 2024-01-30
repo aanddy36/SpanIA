@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { ClassesStatus, filters } from "../services/fakeUser";
+import { ClassesStatus, filters } from "../services/models";
 import { TableClasses } from "../sections/TableClasses";
 import { useDispatch, useSelector } from "react-redux";
 import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";

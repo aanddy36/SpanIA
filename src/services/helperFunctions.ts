@@ -97,21 +97,3 @@ export const longMonth = (month: number) => {
   ];
   return monthArray[month];
 };
-
-export const isValidImageFile = (file:File) => {
-  const allowedTypes = ['image/png','imag/jpg','image/jpeg'];
-  return allowedTypes.includes(file.type)
-};
-
-export const convertFileToBase64 = (file: File) => {
-  return new Promise((resolve, reject)=>{
-    const fileReader = new FileReader()
-    fileReader.readAsDataURL(file)
-    fileReader.onload = ()=>{
-      resolve(fileReader.result)
-    }
-    fileReader.onerror= (error)=>{
-      reject(error)
-    }
-  })
-};

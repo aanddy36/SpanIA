@@ -1,6 +1,8 @@
 export interface DayInTheWeek {
+  _id?: string;
   dayInTheWeek: number;
   time: string;
+  __v0?: number;
 }
 export const availableHours: DayInTheWeek[] = [
   {
@@ -91,7 +93,7 @@ export const availableHours: DayInTheWeek[] = [
     dayInTheWeek: 1,
     time: "14:30",
   },
-  
+
   {
     dayInTheWeek: 1,
     time: "23:00",
@@ -279,7 +281,7 @@ export const availableHours: DayInTheWeek[] = [
   },
 ];
 
-export const reservedHours: {id:string;hour:Date}[] = [
+export const reservedHours: { id: string; hour: Date }[] = [
   {
     id: "1",
     hour: new Date(2024, 0, 17, 14, 0),
@@ -364,7 +366,7 @@ export const reservedHours: {id:string;hour:Date}[] = [
     id: "21",
     hour: new Date(2024, 0, 15, 15, 30),
   },
-]
+];
 
 export const halfHourArray = [] as string[];
 

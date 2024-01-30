@@ -3,12 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggleConfirmClass } from "../features/reserveClass/reserveClassSlice";
 import { RootState } from "../store";
 import { formatPrice, longDate, stringedHour } from "../services/helperFunctions";
-import { professor } from "../services/fakeUser";
 
 export const ConfirmClassPopup = () => {
 
   const dispatch = useDispatch();
   const { selectedCells, price } = useSelector((store: RootState) => store.reserveClass);
+  const { phone, address } = useSelector((store: RootState) => store.configuration);
+
   let startDate = selectedCells && new Date(selectedCells[0].time)
   let endingDate = selectedCells && new Date(selectedCells[selectedCells.length-1].time)
   endingDate?.setMinutes(endingDate.getMinutes()+30)
@@ -40,10 +41,10 @@ export const ConfirmClassPopup = () => {
             <span className="font-medium">Hour:</span> {startingHour} - {endingHour}
           </li>
           <li className=" text-base font-light">
-            <span className="font-medium">Javier’s Phone:</span> {professor[0].phone}
+            <span className="font-medium">Javier’s Phone:</span> {phone}
           </li>
           <li className=" text-base font-light">
-            <span className="font-medium">Location:</span> {professor[0].email}
+            <span className="font-medium">Location:</span> {address}
           </li>
           <li className=" text-base font-light">
             <span className="font-medium">Price:</span> {formatPrice(price)}

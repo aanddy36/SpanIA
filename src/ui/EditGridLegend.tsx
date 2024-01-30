@@ -1,12 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
-import {
-  activeConfirmPopup,
-  addCurrentSchedule,
-} from "../features/adminSchedule/adminScheduleSlice";
+import { activeConfirmPopup, getSchedule } from "../features/adminSchedule/adminScheduleSlice";
+import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
 
 export const EditGridLegend = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch() as ThunkDispatch<
+    RootState,
+    undefined,
+    AnyAction
+  >;
   const { isCurrentScheduleAdded, selectedCells } = useSelector(
     (store: RootState) => store.adminSchedule
   );
@@ -33,7 +35,7 @@ export const EditGridLegend = () => {
           if (selectedCells.length) {
             dispatch(activeConfirmPopup("ADD_CURRENT"));
           } else {
-            dispatch(addCurrentSchedule());
+            dispatch(getSchedule());
           }
         }}
       >

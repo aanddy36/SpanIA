@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BACKEND_URL } from "../../services/fakeUser";
+import { BACKEND_URL } from "../../services/models";
 
 interface State {
   isLoadingConfig: boolean;

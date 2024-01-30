@@ -4,7 +4,7 @@ import logo from "../images/icons/logo.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { signOut, toggleLogin, toggleSignup } from "../features/auth/authSlice";
 import { RootState } from "../store";
-import { TokenRoles } from "../services/fakeUser";
+import { TokenRoles } from "../services/models";
 import { resetState } from "../features/admin/adminSlice";
 
 export const Sidebar = ({

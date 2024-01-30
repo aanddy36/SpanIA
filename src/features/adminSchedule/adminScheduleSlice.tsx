@@ -1,14 +1,13 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
+  BACKEND_URL,
   EditableHoursStatus,
   HoveredCell,
   Schedule_cell,
-} from "../../services/fakeUser";
-import {
-  DayInTheWeek,
-  availableHours,
-} from "../../services/teachersAvailabiltyGrid";
+} from "../../services/models";
+import { DayInTheWeek } from "../../services/teachersAvailabiltyGrid";
 import { stringedHour } from "../../services/helperFunctions";
+import axios from "axios";
 
 interface State {
   isEditorOpen: boolean;
@@ -17,6 +16,7 @@ interface State {
   isCurrentScheduleAdded: boolean;
   selectedCells: DayInTheWeek[];
   confirmPopup: "CLOSE_EDITOR" | "ADD_CURRENT" | "CLEAR_SCHEDULE" | "SAVE" | "";
+  isLoadingSched: boolean;
 }
 
 const initialState: State = {
@@ -24,8 +24,9 @@ const initialState: State = {
   editableGrid: [],
   hoveredCell: null,
   isCurrentScheduleAdded: true,
-  selectedCells: availableHours,
+  selectedCells: [],
   confirmPopup: "",
+  isLoadingSched: false,
 };
 
 const generateEditableGrid = (selectedCells: DayInTheWeek[]) => {
@@ -60,13 +61,52 @@ const generateEditableGrid = (selectedCells: DayInTheWeek[]) => {
   return grid;
 };
 
+export const updateSchedule = createAsyncThunk(
+  "adminSchedule/updateSchedule",
+  async (arg: { newSchedule: any }) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await axios.patch(
+        `${BACKEND_URL}/availableHours`,
+        {
+          newSchedule: arg.newSchedule,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return "error";
+    }
+  }
+);
+
+export const getSchedule = createAsyncThunk(
+  "adminSchedule/getSchedule",
+  async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(`${BACKEND_URL}/availableHours`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return "error";
+    }
+  }
+);
+
 const adminScheduleSlice = createSlice({
   name: "adminSchedule",
   initialState,
   reducers: {
     toggleEditor: (state, { payload }) => {
-      console.log(payload);
-
       state.isEditorOpen = payload;
       if (!payload) {
         state.editableGrid = initialState.editableGrid;
@@ -75,9 +115,6 @@ const adminScheduleSlice = createSlice({
         state.selectedCells = initialState.selectedCells;
         state.confirmPopup = "";
       }
-    },
-    getEditableGrid: (state) => {
-      state.editableGrid = generateEditableGrid(state.selectedCells);
     },
     hoveredEditHour: (state, { payload: { x, y, data, col } }) => {
       state.hoveredCell = { x, y, date: data, col };
@@ -102,32 +139,72 @@ const adminScheduleSlice = createSlice({
       } else {
         state.selectedCells = [...state.selectedCells, myObject];
       }
+      state.editableGrid = generateEditableGrid(state.selectedCells);
       state.isCurrentScheduleAdded = false;
-    },
-    addCurrentSchedule: (state) => {
-      state.isCurrentScheduleAdded = initialState.isCurrentScheduleAdded;
-      state.selectedCells = initialState.selectedCells;
-      state.confirmPopup = "";
     },
     clearSchedule: (state) => {
       state.selectedCells = [];
       state.isCurrentScheduleAdded = false;
       state.confirmPopup = "";
+      state.editableGrid = generateEditableGrid(state.selectedCells);
     },
-    activeConfirmPopup: (state,{payload})=>{
-      state.confirmPopup = payload}
+    activeConfirmPopup: (state, { payload }) => {
+      state.confirmPopup = payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(updateSchedule.pending, (state) => {
+        state.isLoadingSched = true;
+      })
+      .addCase(updateSchedule.fulfilled, (state, { payload }) => {
+        state.isLoadingSched = false;
+        if (payload === "error") {
+        } else {
+          state.isEditorOpen = false;
+          state.selectedCells = payload.schedule.map((cell: DayInTheWeek) => {
+            return {
+              dayInTheWeek: cell.dayInTheWeek,
+              time: cell.time,
+            };
+          });
+        }
+      })
+      .addCase(updateSchedule.rejected, (state) => {
+        state.isLoadingSched = false;
+      })
+
+      .addCase(getSchedule.pending, (state) => {
+        state.isLoadingSched = true;
+      })
+      .addCase(getSchedule.fulfilled, (state, { payload }) => {
+        state.isLoadingSched = false;
+        if (payload === "error") {
+        } else {
+          state.selectedCells = payload.schedule.map((cell: DayInTheWeek) => {
+            return {
+              dayInTheWeek: cell.dayInTheWeek,
+              time: cell.time,
+            };
+          });
+          state.editableGrid = generateEditableGrid(state.selectedCells);
+          state.isCurrentScheduleAdded = initialState.isCurrentScheduleAdded;
+          state.confirmPopup = "";
+        }
+      })
+      .addCase(getSchedule.rejected, (state) => {
+        state.isLoadingSched = false;
+      });
   },
 });
 
 export const {
   toggleEditor,
-  getEditableGrid,
   hoveredEditHour,
   unhoveredEditHour,
   toggleCell,
-  addCurrentSchedule,
   clearSchedule,
-  activeConfirmPopup
+  activeConfirmPopup,
 } = adminScheduleSlice.actions;
 
 export default adminScheduleSlice.reducer;

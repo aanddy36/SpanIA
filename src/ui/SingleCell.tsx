@@ -1,4 +1,4 @@
-import { Schedule_cell, TeacherHoursStatus } from "../services/fakeUser";
+import { Schedule_cell, TeacherHoursStatus } from "../services/models";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import {

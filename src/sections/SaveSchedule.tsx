@@ -1,9 +1,32 @@
-import { useDispatch } from 'react-redux'
-import { activeConfirmPopup, toggleEditor } from '../features/adminSchedule/adminScheduleSlice'
-import { FaXmark } from 'react-icons/fa6'
+import { useDispatch, useSelector } from "react-redux";
+import {
+  activeConfirmPopup,
+  updateSchedule,
+} from "../features/adminSchedule/adminScheduleSlice";
+import { FaXmark } from "react-icons/fa6";
+import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
+import { RootState } from "../store";
+import { LoadingAdmin } from "./LoadingAdmin";
 
 export const SaveSchedule = () => {
-    const dispatch = useDispatch()
+  const dispatch = useDispatch() as ThunkDispatch<
+    RootState,
+    undefined,
+    AnyAction
+  >;
+  const { selectedCells, isLoadingSched } = useSelector(
+    (store: RootState) => store.adminSchedule
+  );
+  if (isLoadingSched) {
+    return (
+      <div
+        className="absolute top-[50%] translate-y-[-50%] left-[50%] translate-x-[-50%]
+    shadow-md shadow-black/30  rounded-lg bg-white px-28 pt-16 pb-20 scale-[0.5]"
+      >
+        <LoadingAdmin />
+      </div>
+    );
+  }
   return (
     <div
       className="absolute top-[50%] translate-y-[-50%] left-[50%] translate-x-[-50%] px-5 pb-5 pt-10 
@@ -28,11 +51,13 @@ export const SaveSchedule = () => {
         <button
           className=" py-1 px-3 rounded-lg font-medium transition-opacity duration-200
            hover:opacity-50"
-          onClick={() => dispatch(toggleEditor(false))}
+          onClick={() =>
+            dispatch(updateSchedule({ newSchedule: selectedCells }))
+          }
         >
           Yes
         </button>
       </div>
     </div>
-  )
-}
+  );
+};

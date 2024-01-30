@@ -1,4 +1,4 @@
-import { AdminStudents } from "../services/fakeUser";
+import { AdminStudents } from "../services/models";
 import noPhoto from "../images/no-photo.jpg";
 
 export const TableStudents = ({ students }: { students: AdminStudents[] }) => {

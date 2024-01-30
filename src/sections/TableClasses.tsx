@@ -1,5 +1,5 @@
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
-import { AdminClasses } from "../services/fakeUser";
+import { AdminClasses } from "../services/models";
 import { TableRow } from "./TableRow";
 import { useEffect, useState } from "react";
 

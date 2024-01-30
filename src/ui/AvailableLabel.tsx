@@ -5,7 +5,7 @@ import {
   stringedHour,
 } from "../services/helperFunctions";
 import { RootState } from "../store";
-import { DurationOptions } from "../services/fakeUser";
+import { DurationOptions } from "../services/models";
 
 export const AvailableLabel = () => {
   const { hoveredCellInfo, duration } = useSelector((store: RootState) => store.reserveClass);

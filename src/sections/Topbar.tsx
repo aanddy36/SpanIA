@@ -8,7 +8,7 @@ import noPhoto from "../images/no-photo.jpg";
 import logout from "../images/icons/logout.svg";
 import setting from "../images/icons/setting.svg";
 import { useEffect, useState } from "react";
-import { TokenRoles } from "../services/fakeUser";
+import { TokenRoles } from "../services/models";
 import { resetState } from "../features/admin/adminSlice";
 
 export const Topbar = ({

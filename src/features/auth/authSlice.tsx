@@ -5,7 +5,7 @@ import {
   CheckStatus,
   Classes,
   TokenRoles,
-} from "../../services/fakeUser";
+} from "../../services/models";
 
 interface State {
   isLoggedIn: boolean;

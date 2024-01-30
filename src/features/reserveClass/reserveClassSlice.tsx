@@ -2,10 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   DurationOptions,
   HoveredCell,
-  PriceOptions,
   Schedule_cell,
   TeacherHoursStatus,
-} from "../../services/fakeUser";
+} from "../../services/models";
 import { stringedHour } from "../../services/helperFunctions";
 import {
   DayInTheWeek,
@@ -30,7 +29,7 @@ const initialState: State = {
   hoveredCellInfo: null,
   firstDay: new Date().setDate(new Date().getDate() + 1),
   hoveredCells: null,
-  price: PriceOptions.SHORT,
+  price: 0,
   selectedCells: null,
   isConfirmPopupOpen: false,
 };
@@ -170,13 +169,8 @@ const reserveClassSlice = createSlice({
       );
     },
     changeDuration: (state, { payload }) => {
-      state.duration = payload;
-      state.price =
-        state.duration === DurationOptions.SHORT
-          ? PriceOptions.SHORT
-          : state.duration === DurationOptions.MEDIUM
-          ? PriceOptions.MEDIUM
-          : PriceOptions.LONG;
+      state.duration = payload.duration;
+      state.price = payload.price;
       state.selectedCells = null;
     },
     setHoveredCells: (state, { payload }) => {

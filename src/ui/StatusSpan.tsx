@@ -1,4 +1,4 @@
-import { ClassesStatus } from "../services/fakeUser"
+import { ClassesStatus } from "../services/models"
 
 export const StatusSpan = ({status}:{status:ClassesStatus}) => {
   return (

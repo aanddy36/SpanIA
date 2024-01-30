@@ -1,4 +1,4 @@
-import { Classes } from "../services/fakeUser";
+import { Classes } from "../services/models";
 import { formatDate, formatPrice, stringedHour } from "../services/helperFunctions";
 import { StatusSpan } from "../ui/StatusSpan";
 

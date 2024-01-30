@@ -8,7 +8,7 @@ import {
   Chart,
   ClassesStatus,
   Sales,
-} from "../../services/fakeUser";
+} from "../../services/models";
 
 interface State {
   isLoading: boolean;

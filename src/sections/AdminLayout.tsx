@@ -5,7 +5,7 @@ import calendar from "../images/icons/calendar.svg";
 import students from "../images/icons/students.svg";
 import settings from "../images/icons/setting.svg";
 import logout from "../images/icons/logout.svg";
-import { CheckStatus, TokenRoles } from "../services/fakeUser";
+import { CheckStatus, TokenRoles } from "../services/models";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { ScheduleEditor } from "../pages/ScheduleEditor";
