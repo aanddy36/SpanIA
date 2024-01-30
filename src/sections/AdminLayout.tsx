@@ -1,5 +1,5 @@
 import logo from "../images/icons/logo.svg";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import house from "../images/icons/home.svg";
 import calendar from "../images/icons/calendar.svg";
 import students from "../images/icons/students.svg";
@@ -9,14 +9,17 @@ import { CheckStatus, TokenRoles } from "../services/fakeUser";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { ScheduleEditor } from "../pages/ScheduleEditor";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
 import { checkToken, rejectCheck, signOut } from "../features/auth/authSlice";
 import noPhoto from "../images/no-photo.jpg";
 import { LoadingPage } from "./LoadingPage";
 import { RejectedPage } from "./RejectedPage";
+import { resetState } from "../features/admin/adminSlice";
 
 export const AdminLayout = () => {
+  const currentPath = location.pathname;
+  const navigate = useNavigate();
   const isActiveStyle = {
     backgroundColor: "#F5F6F9",
   };
@@ -26,11 +29,20 @@ export const AdminLayout = () => {
   const { role, userInfo, isLoading, readyToCheck } = useSelector(
     (store: RootState) => store.auth
   );
+  const { profilePhoto } = useSelector(
+    (store: RootState) => store.configuration
+  );
   const dispatch = useDispatch() as ThunkDispatch<
     RootState,
     undefined,
     AnyAction
   >;
+  const [thePhoto, setThePhoto] = useState(
+    profilePhoto ? profilePhoto : noPhoto
+  );
+  useEffect(() => {
+    setThePhoto(profilePhoto);
+  }, [profilePhoto]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,9 +50,8 @@ export const AdminLayout = () => {
         const myToken = localStorage.getItem("token");
         await dispatch(checkToken(myToken as any));
         if (readyToCheck === CheckStatus.READY) {
-          
-          if (role !== TokenRoles.ADMIN && !isLoading ) {
-            dispatch(rejectCheck())
+          if (role !== TokenRoles.ADMIN && !isLoading) {
+            dispatch(rejectCheck());
           }
         }
       } catch (error) {
@@ -56,7 +67,6 @@ export const AdminLayout = () => {
   if (readyToCheck === CheckStatus.FAILED) {
     return <RejectedPage />;
   }
-  const thePhoto = userInfo.profilePhoto ? userInfo.profilePhoto : noPhoto;
   return (
     <div className="flex min-w-screen">
       {isEditorOpen && <ScheduleEditor />}
@@ -112,6 +122,10 @@ export const AdminLayout = () => {
             <button
               onClick={() => {
                 dispatch(signOut());
+                dispatch(resetState());
+                if (currentPath.startsWith("/admin")) {
+                  navigate("/");
+                }
               }}
             >
               <img

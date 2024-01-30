@@ -94,14 +94,37 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+export const changeProfilePhoto = createAsyncThunk(
+  "auth/changeProfilePhoto",
+  async (arg: { avatar: any }) => {
+    const token = localStorage.getItem("token");
+    try {
+      let sendImage = await axios.post(
+        `${BACKEND_URL}/imageUpload`,
+        arg.avatar,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      return sendImage.data;
+    } catch (error) {
+      return "error";
+    }
+  }
+);
+
 export const getUserClasses = createAsyncThunk(
   "auth/getUserClasses",
   async (arg: { id: string }) => {
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem("token");
     try {
       const response = await axios.get(`${BACKEND_URL}/classes/${arg.id}`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           studentId: arg.id,
         },
       });
@@ -255,6 +278,22 @@ const authSlice = createSlice({
         }
       })
       .addCase(getUserClasses.rejected, (state) => {
+        state.isLoading = false;
+      })
+
+      .addCase(changeProfilePhoto.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(changeProfilePhoto.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        if (payload === "error") {
+        } else {
+          console.log(payload);
+
+          state.userInfo.profilePhoto = (payload as any).user.profilePhoto;
+        }
+      })
+      .addCase(changeProfilePhoto.rejected, (state) => {
         state.isLoading = false;
       });
   },

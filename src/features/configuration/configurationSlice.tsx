@@ -7,6 +7,7 @@ interface State {
   address: string;
   phone: string;
   pricePerHour: number | null;
+  profilePhoto: string;
   error: string;
 }
 
@@ -15,6 +16,7 @@ const initialState: State = {
   address: "",
   phone: "",
   pricePerHour: null,
+  profilePhoto: "",
   error: "",
 };
 
@@ -32,8 +34,7 @@ export const getConfiguration = createAsyncThunk(
 
 export const editConfiguration = createAsyncThunk(
   "auth/editConfiguration",
-  async (arg:{config:any}) => {
-   
+  async (arg: { config: any }) => {
     const token = localStorage.getItem("token");
     try {
       const response = await axios.patch(
@@ -46,8 +47,28 @@ export const editConfiguration = createAsyncThunk(
           },
         }
       );
-      return response.data;
+
+      let sendImage = "";
+      if (arg.config.avatar) {
+        sendImage = await axios.post(
+          `${BACKEND_URL}/imageUpload`,
+          arg.config.avatar,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      }
+      let answer = {
+        config: response.data,
+        image: sendImage ? (sendImage as any).data : "",
+      };
+
+      return answer;
     } catch (error) {
+
       return "error";
     }
   }
@@ -69,10 +90,12 @@ const configSlice = createSlice({
         if (payload === "error") {
           state.error = "Could'nt retrieve the class details";
         } else {
-          const { address, phone, pricePerHour } = payload.configuration[0];
+          const { address, phone, pricePerHour, profilePhoto } =
+            payload.configuration[0];
           state.address = address;
           state.phone = phone;
           state.pricePerHour = pricePerHour;
+          state.profilePhoto = profilePhoto;
         }
       })
       .addCase(getConfiguration.rejected, (state) => {
@@ -85,14 +108,17 @@ const configSlice = createSlice({
       })
       .addCase(editConfiguration.fulfilled, (state, { payload }) => {
         state.isLoadingConfig = false;
-       
+
         if (payload === "error") {
-          state.error = "Could'nt edit the class details";
+          state.error = "Couldn't edit the class details";
         } else {
-          const { address, phone, pricePerHour } = payload.newConfiguration;
+          const { address, phone, pricePerHour, profilePhoto } =
+            payload.config.newConfiguration;
           state.address = address;
           state.phone = phone;
           state.pricePerHour = pricePerHour;
+          state.profilePhoto = profilePhoto;
+          /* console.log(payload); */
         }
       })
       .addCase(editConfiguration.rejected, (state) => {

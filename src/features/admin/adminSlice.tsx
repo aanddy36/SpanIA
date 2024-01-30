@@ -87,7 +87,11 @@ export const getSummary = createAsyncThunk("admin/getSummary", async () => {
 const adminSlice = createSlice({
   name: "admin",
   initialState,
-  reducers: {},
+  reducers: {
+    resetState: () => {
+      return {...initialState}
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getClasses.pending, (state) => {
@@ -138,6 +142,6 @@ const adminSlice = createSlice({
       });
   },
 });
-export const {} = adminSlice.actions;
+export const {resetState} = adminSlice.actions;
 
 export default adminSlice.reducer;

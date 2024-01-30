@@ -7,8 +7,9 @@ import { RootState } from "../store";
 import noPhoto from "../images/no-photo.jpg";
 import logout from "../images/icons/logout.svg";
 import setting from "../images/icons/setting.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TokenRoles } from "../services/fakeUser";
+import { resetState } from "../features/admin/adminSlice";
 
 export const Topbar = ({
   handleClick,
@@ -17,8 +18,28 @@ export const Topbar = ({
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isLoggedIn, role, userInfo } = useSelector((store: RootState) => store.auth);
+  const { isLoggedIn, role, userInfo } = useSelector(
+    (store: RootState) => store.auth
+  );
+  const { profilePhoto } = useSelector(
+    (store: RootState) => store.configuration
+  );
   const [isHovering, setIsHovering] = useState(false);
+  const currentPath = location.pathname;
+  const [thePhoto, setThePhoto] = useState("");
+
+  useEffect(() => {
+    let selectedPhoto = "";
+    if (role === TokenRoles.ADMIN) {
+      selectedPhoto = profilePhoto;
+    } else if (role === TokenRoles.USER) {
+      selectedPhoto = userInfo.profilePhoto;
+    }
+    if (!selectedPhoto) {
+      selectedPhoto = noPhoto;
+    }
+    setThePhoto(selectedPhoto);
+  }, [profilePhoto, userInfo.profilePhoto]);
 
   const handleReserveClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -36,7 +57,7 @@ export const Topbar = ({
       navigate("/profile");
     }
   };
-  const thePhoto = userInfo.profilePhoto ? userInfo.profilePhoto : noPhoto;
+  //const thePhoto = userInfo.profilePhoto ? userInfo.profilePhoto : noPhoto;
   return (
     <nav className="px-10 py-4 flex justify-between w-full items-center shadow-md shadow-black/10">
       <Link to=".">
@@ -121,7 +142,16 @@ export const Topbar = ({
                   <span
                     className=" text-[14px] font-medium group-hover:text-red group-hover:underline
                transition-colors duration-200"
-                    onClick={() => dispatch(signOut())}
+                    onClick={() => {
+                      dispatch(signOut());
+                      dispatch(resetState());
+                      if (
+                        currentPath === "/reserve" ||
+                        currentPath === "/profile"
+                      ) {
+                        navigate("/");
+                      }
+                    }}
                   >
                     Log Out
                   </span>

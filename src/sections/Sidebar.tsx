@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { signOut, toggleLogin, toggleSignup } from "../features/auth/authSlice";
 import { RootState } from "../store";
 import { TokenRoles } from "../services/fakeUser";
+import { resetState } from "../features/admin/adminSlice";
 
 export const Sidebar = ({
   isSidebarOpen,
@@ -15,6 +16,7 @@ export const Sidebar = ({
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const currentPath = location.pathname;
   const { isLoggedIn, role } = useSelector((store: RootState) => store.auth);
 
   const handleReserveClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -129,6 +131,13 @@ export const Sidebar = ({
               onClick={() => {
                 setIsSidebarOpen(false);
                 dispatch(signOut());
+                dispatch(resetState())
+                if (
+                  currentPath === "/reserve" ||
+                  currentPath === "/profile"
+                ) {
+                  navigate("/");
+                }
               }}
             >
               Log Out

@@ -2,13 +2,12 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleEditor } from "../features/adminSchedule/adminScheduleSlice";
 import { RootState } from "../store";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   editConfiguration,
   getConfiguration,
 } from "../features/configuration/configurationSlice";
 import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
-import { isValidImageFile } from "../services/helperFunctions";
 import { LoadingAdmin } from "../sections/LoadingAdmin";
 
 export const AdminSettings = () => {
@@ -20,9 +19,6 @@ export const AdminSettings = () => {
   const { phone, address, pricePerHour, isLoadingConfig } = useSelector(
     (store: RootState) => store.configuration
   );
-  const {
-    userInfo: { profilePhoto },
-  } = useSelector((store: RootState) => store.auth);
   useEffect(() => {
     const fetchConfiguration = async () => {
       await dispatch(getConfiguration());
@@ -39,31 +35,24 @@ export const AdminSettings = () => {
     register,
     handleSubmit,
     formState: { errors },
-    setError,
     reset,
   } = useForm({
     defaultValues: initialValues,
   });
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const onSubmit = async (data: any) => {
-    let selectedFile = data.avatar?.[0];
-    if (selectedFile) {
-      if (!isValidImageFile(selectedFile)) {
-        setError("avatar", {
-          message: "Invalid file type. Please choose a jpg, jpeg, or png file",
-        });
-      } else {
-        //selectedFile = await convertFileToBase64(selectedFile)
-        //console.log(selectedFile);
-      }
+    let formData = "" as any;
+    if (inputRef?.current?.files?.[0]) {
+      formData = new FormData();
+      formData.append("avatar", inputRef.current.files[0]);
     }
+
     let newData = {
       ...data,
       pricePerHour: Number(data.pricePerHour),
-      avatar: !selectedFile ? "" : selectedFile ? selectedFile : profilePhoto,
+      avatar: formData,
     };
-    //console.log(newData);
-    //console.log(initialValues);
 
     if (JSON.stringify(newData) === JSON.stringify(initialValues)) {
       reset();
@@ -197,7 +186,7 @@ export const AdminSettings = () => {
                 accept="image/png, image/jpeg"
                 id="image"
                 className="text-[14px]"
-                {...register("avatar")}
+                ref={inputRef}
               />
               {errors.avatar && (
                 <span className="text-red font-medium text-[12px] mt-2">

@@ -78,6 +78,7 @@ export interface RootState {
     address: string;
     phone: string;
     pricePerHour: number | null;
+    profilePhoto: string;
     error: string;
   };
   admin: {

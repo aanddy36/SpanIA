@@ -32,15 +32,6 @@ export const Layout = () => {
     undefined,
     AnyAction
   >;
-  //console.log(currentPath);
-  /*   useEffect(() => {
-    const myToken = localStorage.getItem("token");
-    if (myToken) {
-      console.log(currentPath);
-
-      dispatch(checkToken(myToken));
-    }
-  }, []); */
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,7 +43,7 @@ export const Layout = () => {
           } else {
             dispatch(acceptCheck());
           }
-        }else{
+        } else {
           await dispatch(checkToken(myToken as any));
         }
         if (readyToCheck === CheckStatus.READY) {
