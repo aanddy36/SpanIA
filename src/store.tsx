@@ -59,6 +59,11 @@ export interface RootState {
     price: number;
     selectedCells: Schedule_cell[] | null;
     isConfirmPopupOpen: boolean;
+    availableHours: DayInTheWeek[];
+    isLoadingAvail: boolean;
+    errorCreating: string;
+    reservedHours: { id: string; hour: number }[];
+    succesCreating: string;
   };
   adminSchedule: {
     isEditorOpen: boolean;
@@ -72,7 +77,7 @@ export interface RootState {
       | "CLEAR_SCHEDULE"
       | "SAVE"
       | "";
-      isLoadingSched: boolean;
+    isLoadingSched: boolean;
   };
   configuration: {
     isLoadingConfig: boolean;

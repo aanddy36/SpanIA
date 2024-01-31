@@ -2,11 +2,15 @@ import { halfHourArray } from "../services/teachersAvailabiltyGrid";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import { SingleCell } from "./SingleCell";
+import { LoadingAdmin } from "../sections/LoadingAdmin";
 
 export const RCSchedule = () => {
-  const { teachersSchedule } = useSelector(
+  const { teachersSchedule, isLoadingAvail } = useSelector(
     (store: RootState) => store.reserveClass
   );
+  if(isLoadingAvail){
+    return <LoadingAdmin />
+  }
   return (
     <div className="grid grid-cols-8 h-[270px] overflow-y-scroll border-red-scroll">
       <div className="flex flex-col relative bottom-[15px]">

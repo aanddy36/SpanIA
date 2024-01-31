@@ -196,7 +196,9 @@ export const SignUpPopup = () => {
         <div className="text-[14px] text-red font-medium w-fit mx-auto mt-4">
           <span className="opacity-50 text-black ">Already a member?</span>{" "}
           <button
-            className="cursor-pointer transition-all duration-200 hover:underline"
+            className="cursor-pointer transition-all duration-200 hover:underline disabled:cursor-not-allowed
+             disabled:opacity-50"
+            disabled={isLoading}
             onClick={() => dispatch(toggleLogin(true))}
           >
             Log in

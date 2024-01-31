@@ -88,13 +88,8 @@ export const updateSchedule = createAsyncThunk(
 export const getSchedule = createAsyncThunk(
   "adminSchedule/getSchedule",
   async () => {
-    const token = localStorage.getItem("token");
     try {
-      const response = await axios.get(`${BACKEND_URL}/availableHours`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(`${BACKEND_URL}/availableHours`);
       return response.data;
     } catch (error) {
       return "error";

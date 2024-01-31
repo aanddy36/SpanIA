@@ -119,16 +119,14 @@ export const LogInPopup = () => {
             <input
               className={`w-full border border-black/40 text-[14px] font-light px-4 py-1 rounded-md
               ${!activedForm ? "" : "hidden"}`}
-              placeholder="Professor's email"
-              /* defaultValue="fakejavier@hotmail.com" */
+              placeholder="fakejavier@hotmail.com"
               {...register("professorEmail")}
             />
             <input
               type="password"
               className={`w-full border border-black/40 text-[14px] font-light px-4 py-1 rounded-md
               ${!activedForm ? "" : "hidden"}`}
-              placeholder="Password"
-              /* defaultValue="12345678" */
+              placeholder="12345678"
               {...register("professorPassword")}
             />
             {errorAdmin && (

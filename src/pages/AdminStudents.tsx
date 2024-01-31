@@ -24,7 +24,6 @@ export const AdminStudents = () => {
 
   useEffect(() => {
     let inputVv = searchBar?.trim();
-    console.log(inputVv);
 
     dispatch(getStudents({ input: inputVv }));
   }, [searchBar]);

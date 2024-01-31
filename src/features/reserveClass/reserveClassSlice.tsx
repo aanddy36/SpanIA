@@ -1,16 +1,14 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
+  BACKEND_URL,
   DurationOptions,
   HoveredCell,
   Schedule_cell,
   TeacherHoursStatus,
 } from "../../services/models";
 import { stringedHour } from "../../services/helperFunctions";
-import {
-  DayInTheWeek,
-  availableHours,
-  reservedHours,
-} from "../../services/teachersAvailabiltyGrid";
+import { DayInTheWeek } from "../../services/teachersAvailabiltyGrid";
+import axios from "axios";
 
 interface State {
   duration: DurationOptions;
@@ -21,6 +19,11 @@ interface State {
   price: number;
   selectedCells: Schedule_cell[] | null;
   isConfirmPopupOpen: boolean;
+  availableHours: DayInTheWeek[];
+  isLoadingAvail: boolean;
+  errorCreating: string;
+  reservedHours: { id: string; hour: number }[];
+  succesCreating: string;
 }
 
 const initialState: State = {
@@ -32,21 +35,58 @@ const initialState: State = {
   price: 0,
   selectedCells: null,
   isConfirmPopupOpen: false,
+  availableHours: [],
+  isLoadingAvail: false,
+  errorCreating: "",
+  reservedHours: [],
+  succesCreating: "",
 };
 
-/* const getTeacherSchedule = createAsyncThunk('reserveClass/getTeacherSchedule',async ()=>{
+export const getAvailableHours = createAsyncThunk(
+  "reserveClass/getAvailableHours",
+  async (arg: { time: any }) => {
     try {
-   
-    }catch(err){
-        console.log(err);
-        
+      const response = await axios.get(`${BACKEND_URL}/availableHours`);
+      const reservedCells = await axios.get(
+        `${BACKEND_URL}/reservedHours/${arg.time}`
+      );
+      return { schedule: response.data, reserved: reservedCells.data };
+    } catch (error) {
+      return "error";
     }
-}) */
+  }
+);
+
+export const createClass = createAsyncThunk(
+  "reserveClass/createClass",
+  async (arg: { newClass: any; hoursToReserve: any; time: any }) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.post(
+        `${BACKEND_URL}/classes`,
+        {
+          theClass: arg.newClass,
+          hoursToReserve: arg.hoursToReserve,
+          time: arg.time,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            studentId: arg.newClass.studentId,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return "error";
+    }
+  }
+);
 
 const generateTeacherGrid = (
   firstDay: number,
   availableHours: DayInTheWeek[],
-  reservedClasses: { id: string; hour: Date }[]
+  reservedClasses: { id: string; hour: number }[]
 ) => {
   const newDate = new Date(firstDay);
   newDate.setDate(newDate.getDate());
@@ -59,13 +99,10 @@ const generateTeacherGrid = (
   endingDate.setMinutes(59);
   endingDate.setSeconds(59);
 
-  let theReservedOnes = reservedClasses.filter(
-    (clas) =>
-      clas.hour.getTime() >= newDate.getTime() &&
-      clas.hour.getTime() < endingDate.getTime()
-  );
+  let theReservedOnes = reservedClasses.map((clas) => {
+    return { ...clas, hour: new Date(clas.hour) };
+  });
 
-  //console.log(theReservedOnes);
   let grid = [];
   for (let m = 0; m < 7; m++) {
     const newDate = new Date(firstDay);
@@ -140,6 +177,11 @@ const reserveClassSlice = createSlice({
           let newOne = new Date(state.firstDay);
           state.firstDay = newOne.setDate(newOne.getDate() + 7);
         }
+        state.teachersSchedule = generateTeacherGrid(
+          state.firstDay,
+          state.availableHours,
+          []
+        );
         return;
       }
       const newDate = new Date(state.firstDay);
@@ -159,14 +201,12 @@ const reserveClassSlice = createSlice({
         let newOne = new Date(state.firstDay);
         state.firstDay = newOne.setDate(newOne.getDate() - 1);
       }
-      return;
-    },
-    getTeacherSchedule: (state) => {
       state.teachersSchedule = generateTeacherGrid(
         state.firstDay,
-        availableHours,
-        reservedHours
+        state.availableHours,
+        []
       );
+      return;
     },
     changeDuration: (state, { payload }) => {
       state.duration = payload.duration;
@@ -182,6 +222,77 @@ const reserveClassSlice = createSlice({
     toggleConfirmClass: (state, { payload }) => {
       state.isConfirmPopupOpen = payload;
     },
+    cleanError: (state) => {
+      state.errorCreating = "";
+    },
+    cleanSuccess: (state) => {
+      state.succesCreating = "";
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getAvailableHours.pending, (state) => {
+        state.isLoadingAvail = true;
+      })
+      .addCase(getAvailableHours.fulfilled, (state, { payload }) => {
+        state.isLoadingAvail = false;
+        if (payload === "error") {
+        } else {
+          state.availableHours = payload.schedule.schedule.map(
+            (cell: DayInTheWeek) => {
+              return {
+                dayInTheWeek: cell.dayInTheWeek,
+                time: cell.time,
+              };
+            }
+          );
+
+          state.reservedHours = payload.reserved.reservedHours.map(
+            (cell: any) => {
+              return {
+                ...cell,
+                hour: new Date(cell.hour).getTime(),
+              };
+            }
+          );
+          state.teachersSchedule = generateTeacherGrid(
+            state.firstDay,
+            state.availableHours,
+            state.reservedHours
+          );
+        }
+      })
+      .addCase(getAvailableHours.rejected, (state) => {
+        state.isLoadingAvail = false;
+      })
+
+      .addCase(createClass.pending, (state) => {
+        state.isLoadingAvail = true;
+      })
+      .addCase(createClass.fulfilled, (state, { payload }) => {
+        state.isLoadingAvail = false;
+        if (payload === "error") {
+          state.errorCreating = "Class couldn't be created. Try again.";
+        } else {
+          state.reservedHours = payload.reservedHours.map((cell: any) => {
+            return {
+              ...cell,
+              hour: new Date(cell.hour).getTime(),
+            };
+          });
+          state.teachersSchedule = generateTeacherGrid(
+            state.firstDay,
+            state.availableHours,
+            state.reservedHours
+          );
+          state.selectedCells = null;
+          state.succesCreating = "Your class was succesfully scheduled!";
+        }
+        state.isConfirmPopupOpen = false;
+      })
+      .addCase(createClass.rejected, (state) => {
+        state.isLoadingAvail = false;
+      });
   },
 });
 
@@ -189,11 +300,12 @@ export const {
   hoveredHour,
   unhoveredHour,
   changeWeek,
-  getTeacherSchedule,
   changeDuration,
   setHoveredCells,
   selectCells,
   toggleConfirmClass,
+  cleanError,
+  cleanSuccess,
 } = reserveClassSlice.actions;
 
 export default reserveClassSlice.reducer;

@@ -186,8 +186,6 @@ const authSlice = createSlice({
           localStorage.setItem("token", payload.token);
           const { name, role, phone, email, joinedAt, id, profilePhoto } =
             payload.user;
-          //const item = localStorage.getItem("token");
-          //console.log(item);
           state.isLoggedIn = true;
           state.role = role;
           state.isLoginPopupOpen = false;
@@ -288,8 +286,6 @@ const authSlice = createSlice({
         state.isLoading = false;
         if (payload === "error") {
         } else {
-          console.log(payload);
-
           state.userInfo.profilePhoto = (payload as any).user.profilePhoto;
         }
       })

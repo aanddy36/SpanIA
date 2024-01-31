@@ -4,7 +4,7 @@ import { AvailableLabel } from "../ui/AvailableLabel";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import {
-  getTeacherSchedule,
+  getAvailableHours,
   toggleConfirmClass,
 } from "../features/reserveClass/reserveClassSlice";
 import { RCLegend } from "../ui/RCLegend";
@@ -13,9 +13,14 @@ import noPhoto from "../images/no-photo.jpg";
 import { formatPrice } from "../services/helperFunctions";
 import { DurationTag } from "../ui/DurationTag";
 import { SelectedTag } from "../ui/SelectedTag";
+import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
 
 export const ReserveClass = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch() as ThunkDispatch<
+    RootState,
+    undefined,
+    AnyAction
+  >;
   const { hoveredCellInfo, firstDay, hoveredCells, price, selectedCells } =
     useSelector((store: RootState) => store.reserveClass);
 
@@ -26,7 +31,7 @@ export const ReserveClass = () => {
   newDate.setDate(newDate.getDate() + 6);
 
   useEffect(() => {
-    dispatch(getTeacherSchedule());
+    dispatch(getAvailableHours({time:firstDay}));
   }, [firstDay]);
 
   const thePhoto = profilePhoto ? profilePhoto : noPhoto;

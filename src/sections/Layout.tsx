@@ -17,12 +17,14 @@ import {
 import { CheckStatus, TokenRoles } from "../services/models";
 import { LoadingPage } from "./LoadingPage";
 import { RejectedPage } from "./RejectedPage";
+import { ErrorPopup } from "./ErrorPopup";
+import { SuccessPopup } from "./SuccessPopup";
 
 export const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { isLoginPopupOpen, isSignupPopupOpen, role, readyToCheck, isLoading } =
     useSelector((store: RootState) => store.auth);
-  const { isConfirmPopupOpen } = useSelector(
+  const { isConfirmPopupOpen, errorCreating, succesCreating } = useSelector(
     (store: RootState) => store.reserveClass
   );
   const location = useLocation();
@@ -78,6 +80,8 @@ export const Layout = () => {
       {isLoginPopupOpen && <LogInPopup />}
       {isSignupPopupOpen && <SignUpPopup />}
       {isConfirmPopupOpen && <ConfirmClassPopup />}
+      {errorCreating && <ErrorPopup />}
+      {succesCreating && <SuccessPopup />}
       <Topbar handleClick={() => setIsSidebarOpen((prev) => !prev)} />
       <Sidebar
         setIsSidebarOpen={setIsSidebarOpen}
