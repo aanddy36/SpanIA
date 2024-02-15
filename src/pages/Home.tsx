@@ -22,7 +22,7 @@ export const Home = () => {
     }
   };
   return (
-    <div className="px-4 pb-20 mt-20 full:mt-6 flex flex-col bg-[url('src/images/Background.png')]">
+    <div className="px-4 pb-20 mt-20 full:mt-6 flex flex-col bg-[url('/src/images/Background.png')]">
       <section className="flex gap-10 flex-col full:flex-row full:pl-24">
         <div className=" flex flex-col gap-3 full:pt-32">
           <h3 className="font-medium text-red text-lg">Welcome To My Site</h3>

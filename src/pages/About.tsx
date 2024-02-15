@@ -5,7 +5,7 @@ import { Testimonials } from "../ui/Testimonials";
 export const About = () => {
   return (
     <div className="px-4 pt-14 laptop:py-20 full:pt-6 flex flex-col gap-32 full:gap-0 
-     bg-[url('src/images/Background.png')]">
+     bg-[url('/src/images/Background.png')]">
       <section className="flex gap-10 laptop:pt-8 flex-col laptop:flex-row full:px-24">
         <div className=" flex flex-col gap-3 laptop:pt-24">
           <h1
