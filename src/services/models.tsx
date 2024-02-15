@@ -118,4 +118,4 @@ export interface Chart {
 }
 
 //URL
-export const BACKEND_URL = "http://localhost:3000/api/v1";
+export const BACKEND_URL = "https://spania-863a8ee10d7a.herokuapp.com/api/v1";
