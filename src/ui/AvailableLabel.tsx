@@ -15,10 +15,10 @@ export const AvailableLabel = () => {
   const theHour = stringedHour(date);
   let newDate = new Date(date)
   if(duration === DurationOptions.MEDIUM){
-    newDate.setHours(newDate.getHours()+(duration/60))   
+    newDate.setHours(newDate.getHours()+(Number(duration)/60))   
     newDate.setMinutes(newDate.getMinutes()+30)
   }else{
-    newDate.setHours(newDate.getHours()+(duration/60))
+    newDate.setHours(newDate.getHours()+(Number(duration)/60))
   }
   const finishingHour = stringedHour(newDate)
   return (

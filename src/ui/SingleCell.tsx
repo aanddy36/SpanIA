@@ -26,7 +26,7 @@ export const SingleCell = ({
     row: number
   ) => {
     if (status === TeacherHoursStatus.AVAILABLE) {
-      let nCells = duration / 30;
+      let nCells = Number(duration) / 30;
       let j = 1;
       let newGroup = [];
       for (let i = 0; i < nCells; i++) {
